@@ -29,6 +29,12 @@ if (!is.element("stargazer", installed.packages()[,1]))
   install.packages("stargazer",repos="http://cran.rstudio.com")
 if (!is.element("stringi", installed.packages()[,1]))
   install.packages("stringi",repos="http://cran.rstudio.com")
+if (!is.element("scales", installed.packages()[,1]))
+  install.packages("scales",repos="http://cran.rstudio.com")
+if (!is.element("kableExtra", installed.packages()[,1]))
+  install.packages("kableExtra",repos="http://cran.rstudio.com")
+if (!is.element("knitr", installed.packages()[,1]))
+  install.packages("knitr",repos="http://cran.rstudio.com")
 ```
 
 
@@ -39,66 +45,10 @@ if (!is.element("stringi", installed.packages()[,1]))
 
 ```r
 #Custom functions for Case Study 2
+#Please open MSDS6306_Final_Case_Study_Functions.R for more details
 #Last modified 11/26/17
 
-#Wrapper function for gsub that maintains object classes
-gsubkeep = function(pattern='',replacement=NA,x, ignore.case=FALSE, perl=FALSE,
-										fixed=FALSE, useBytes=FALSE) {
-	if (is.null(dim(x)) && !is.null(class(x))) {
-		colObj = x
-		colClass = class(colObj)
-		colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-									ignore.case=ignore.case,perl=perl,fixed=fixed,
-									useBytes=useBytes)
-		if (colClass == 'factor') {
-			colObj = as.factor(colObj)
-		} else { 
-			colObj = as(colObj,colClass) 
-		}
-		x = colObj
-	} else {
-		for (i in 1:length(x)) {
-			colObj = x[,i]
-			colClass = class(colObj)
-			colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-										ignore.case=ignore.case,perl=perl,fixed=fixed,
-										useBytes=useBytes)
-			if (colClass == 'factor') {
-				colObj = as.factor(colObj)
-			} else { 
-				colObj = as(colObj,colClass) 
-			}
-			x[,i] = colObj
-		}
-	}
-	return(x)
-}
-
-#Function that row-stacks the identified columns of a list of data frames
-#Parameters: {x: list of data frames, elements: the particular data frames within x to stack, 
-#             cols: the particular columns to stack, colname: names of the columns selected with cols parameter }
-list_rowbind = function(x,elements=1:length(x),cols = columns(1:length(x[[1]])),
-												colname = colnames(x[[1]])[cols]) {
-	result = data.frame()
-	for (i in elements) {
-		append_df = x[[i]][,cols]
-		colnames(append_df) = colname
-		result = bind_rows(result,append_df)
-	}
-	return(result)
-}
-
-#Function that creates a list of indices and corresponding strings which match keywords
-#Paratermers: {x: a vector (to be coerced to character) to search, findtext: a vector of keywords to look for}
-match_list = function(x,findtext='') {
-	findtext = as.character(findtext)
-	x = tolower(as.character(x))
-	result = list(length(findtext))
-	for (i in 1:length(findtext)) {
-		result[i] = list(cbind('Idx'=grep(findtext[i],x),'Match'=x[grep(findtext[i],x)]))
-	}
-	return(result)
-}
+source('MSDS6306_Final_Case_Study_Functions.R')
 ```
 
 ## Question 2: Read in and clean raw data
@@ -108,7 +58,8 @@ match_list = function(x,findtext='') {
 # 2: Read in and clean raw data
 
 # 2A: Read in CSV
-dataset_raw <- read.csv("C:\\SMU_INTRO_TO_DS\\CASESTUDY2\\Data\\Procrastination.csv")
+filepath = 'C:\\Users\\Jose\\Downloads\\Case_Study_2\\CaseStudy2_MSDS'
+dataset_raw <- read.csv(paste(filepath,'Procrastination.csv',sep='\\'))
 
 dim(dataset_raw)
 ```
@@ -231,8 +182,8 @@ resp_full = merge(x=resp_answers,y=resp_attrwHDI,by.x='ID',by.y='ID',all.y=TRUE)
 
 # 4B:
 #statistics table
-stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],type='text',
-					summary.stat=c('n','min','p25','median','p75','max','mean','sd'))
+stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],
+					summary.stat=c('n','min','p25','median','p75','max','mean','sd'),type='text')
 ```
 
 ```
@@ -257,41 +208,41 @@ h1 = gghistogram(resp_full,x='Age',y='..count..',
 								 bins=10,
 								 fill='blue',
 								 size=2,
-								 title='Age',
-								 color='white'
+								 title='Histogram of Age',
+								 color='white',
+								 ylab='Count'
 )
 
-h1 + font('x.text',size=8)
-```
+h1 = h1 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-1.png)<!-- -->
 
-```r
 h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
-								 bins=10,
 								 fill='blueviolet',
 								 size=2,
-								 title='Ann Inc',
-								 color='white'
+								 bins=25,
+								 title='Histogram of Annual Income',
+								 color='white',
+								 ylab='Count',
+								 xlab='Annual Income'
 )
 
-h2 + font('x.text',size=10)
-```
+Annual_Inc_Clean = resp_full[which(!is.na(resp_full$Annual_Inc)),'Annual_Inc']
 
-```
-## Warning: Removed 415 rows containing non-finite values (stat_bin).
-```
+h2 = h2 + font('xy.text',size=12) + 
+  theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30) +
+  scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-2.png)<!-- -->
-
-```r
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=5,
+								 bins=35,
 								 fill='cadetblue3',
 								 size=2,
-								 title='HDI',
-								 color='white'
+								 title='Histogram of HDI',
+								 color='white',
+								 ylab='Count'
 )
+
+h3 = h3 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
 DPMetric <- resp_full["DP_Avg"]
 DPMetric$Variable <- 'DP_Avg'
@@ -315,31 +266,20 @@ h4 = ggboxplot(metrics,x='Variable',
 							 y='Value',
 							 color='Variable',
 							 palette='jco',
-							 size=1.5
-)
+							 size=1,
+							 xlab='')
 
 
-h4 + font('x.text',size=10)
-```
+h4 = h4 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30)
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-3.png)<!-- -->
-
-```r
-ggarrange(ggarrange(h1,h2,h3,ncol=3,labels=c('1','2','3')),
-					h4,
+ggarrange(h1,h3,
+					h2,h4,
 					nrow=2,
-					labels='4')
+					ncol=2)
 ```
 
-```
-## Warning: Removed 415 rows containing non-finite values (stat_bin).
-```
-
-```
-## Warning: Removed 192 rows containing non-finite values (stat_bin).
-```
-
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-4.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-1.png)<!-- -->
 
 ```r
 # Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
@@ -374,99 +314,509 @@ keywords = jobs_count[1:10,]
 keywords_del = c('and','of')
 top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 
+#For the codebook only
+#These are the job assignments we subjectively made to get the top10 job counts shown:
+top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
 
+for (i in 1:length(top10Jobs$title)) {
+print(paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
+}
+```
+
+```
+##  [1] "teacher <-  teacher"                              
+##  [2] "teacher <- efl teacher/ professional researcher"  
+##  [3] "teacher <- dance teacher"                         
+##  [4] "teacher <- esl teacher/biologist"                 
+##  [5] "teacher <- freelance esl teacher"                 
+##  [6] "teacher <- special education teacher"             
+##  [7] "teacher <- yoga teacher"                          
+##  [8] "teacher <- teacher assistant"                     
+##  [9] "teacher <- musician/student/teacher"              
+## [10] "teacher <- teacher and full time doctoral student"
+## [11] "teacher <- teacher's assistant/afterschool leader"
+## [12] "teacher <- asst. pre-school teacher"              
+## [13] "teacher <- student/teacher"                       
+## [14] "teacher <- theater artist/ teacher"               
+## [15] "teacher <- early child hood teacher"              
+## [16] "teacher <- teacher / administrator"               
+##  [1] "manager <- sales manager"                           
+##  [2] "manager <- manager"                                 
+##  [3] "manager <- system manager"                          
+##  [4] "manager <- quality manager"                         
+##  [5] "manager <- project manager"                         
+##  [6] "manager <- deputy practice manager"                 
+##  [7] "manager <- office manager / accountant"             
+##  [8] "manager <- it manager"                              
+##  [9] "manager <- divisional manager of a large cosmetics" 
+## [10] "manager <- regional sales manager"                  
+## [11] "manager <- freelance project manager"               
+## [12] "manager <- manager - analytical and environmental s"
+## [13] "manager <- program manager and acting director"     
+## [14] "manager <- operations manager"                      
+## [15] "manager <- case manager"                            
+## [16] "manager <- restaurant operations manager"           
+## [17] "manager <- legal assistant / office manager"        
+## [18] "manager <- human resource manager"                  
+## [19] "manager <- theater general manager"                 
+## [20] "manager <- office services manager"                 
+## [21] "manager <- manager it"                              
+## [22] "manager <- accounting manager"                      
+## [23] "manager <- office manager"                          
+## [24] "manager <- consulting manager"                      
+## [25] "manager <- ehs manager"                             
+## [26] "manager <- program manager"                         
+## [27] "manager <- senior project manager"                  
+## [28] "manager <- manager,interacitve media"               
+## [29] "manager <- financial risk manager"                  
+## [30] "manager <- please specify title manager for regulat"
+## [31] "manager <- account manager"                         
+## [32] "manager <- media relations manager"                 
+## [33] "manager <- research manager"                        
+## [34] "manager <- accounts payable / fleet manager"        
+## [35] "manager <- business manager"                        
+## [36] "manager <- product field test manager"              
+## [37] "manager <- farm manager"                            
+##  [1] "assistant <-  teaching assistant/graduate student"    
+##  [2] "assistant <- assistant professor"                     
+##  [3] "assistant <- administration assistant"                
+##  [4] "assistant <- research assistant"                      
+##  [5] "assistant <- instructional assistant online"          
+##  [6] "assistant <- lab services assistant"                  
+##  [7] "assistant <-  assistant"                              
+##  [8] "assistant <- legal assistant / office manager"        
+##  [9] "assistant <- client relationship assistant"           
+## [10] "assistant <- accounting assistant"                    
+## [11] "assistant <- graduate research assistant"             
+## [12] "assistant <- legal assistant"                         
+## [13] "assistant <- teacher assistant"                       
+## [14] "assistant <- executive assistant"                     
+## [15] "assistant <- it assistant"                            
+## [16] "assistant <- graduate assistant"                      
+## [17] "assistant <-  research/teaching assistant"            
+## [18] "assistant <- fitness assistant / wellness mentor / ca"
+## [19] "assistant <- assistant general counsel"               
+## [20] "assistant <- teacher's assistant/afterschool leader"  
+## [21] "assistant <- insurance broker's assistant"            
+## [22] "assistant <- certified nurse's assistant"             
+## [23] "assistant <- investment assistant"                    
+## [24] "assistant <- academic assistant"                      
+## [25] "assistant <- program assistant"                       
+## [26] "assistant <- clinical research assistant"             
+## [27] "assistant <- library assistant"                       
+## [28] "assistant <- fulltime office assistant"               
+## [29] "assistant <- reasearch assistant"                     
+## [30] "assistant <- assistant district attorney"             
+## [31] "assistant <- speech and language assistant"           
+## [32] "assistant <- clinical trial assistant"                
+## [33] "assistant <- student and administrative assistant"    
+## [34] "assistant <- academic/career coach & admin assistant" 
+## [1] "professor <- college professor"   "professor <- assistant professor"
+## [1] "attorney <- attorney"                                  
+## [2] "attorney <- attorney â<U+0080><U+0093> associate"                    
+## [3] "attorney <- attorney - self employed for 2 years â<U+0080><U+0093> f"
+## [4] "attorney <-  attorney-self employed"                   
+## [5] "attorney <- editor attorney"                           
+## [6] "attorney <- assistant district attorney"               
+##  [1] "engineer <- audio engineer"              
+##  [2] "engineer <- chiefe development engineer" 
+##  [3] "engineer <- engineer"                    
+##  [4] "engineer <- network engineer"            
+##  [5] "engineer <- it support engineer"         
+##  [6] "engineer <- software engineer"           
+##  [7] "engineer <- network services engineer"   
+##  [8] "engineer <- data warehouse engineer"     
+##  [9] "engineer <- it engineer"                 
+## [10] "engineer <- mechanical engineer"         
+## [11] "engineer <- process engineer"            
+## [12] "engineer <- environmental engineer"      
+## [13] "engineer <- plant engineering supervisor"
+## [1] "college <- college professor"                      
+## [2] "college <- college faculty"                        
+## [3] "college <- p-t college faculty & p-t self-employed"
+## [4] "college <- college administrator"                  
+##  [1] "director <- technical director"                      
+##  [2] "director <- director of a language program"          
+##  [3] "director <- ict director"                            
+##  [4] "director <- director"                                
+##  [5] "director <- company director"                        
+##  [6] "director <- director operations"                     
+##  [7] "director <- director of software company"            
+##  [8] "director <- director,social dvelopment"              
+##  [9] "director <- program manager and acting director"     
+## [10] "director <- deputy director"                         
+## [11] "director <- volunteer director"                      
+## [12] "director <- executive director"                      
+## [13] "director <- program director"                        
+## [14] "director <- it director"                             
+## [15] "director <- food department director"                
+## [16] "director <- proposal director"                       
+## [17] "director <- associate director"                      
+## [18] "director <- director of non-profit organization"     
+## [19] "director <- television director"                     
+## [20] "director <- casting director"                        
+## [21] "director <- director / information technology"       
+## [22] "director <- art director"                            
+## [23] "director <- creative director"                       
+## [24] "director <- program director at a non-profit organiz"
+## [25] "director <- director of contract management"         
+## [26] "director <- dept. director (non-profit)"             
+## [27] "director <- writer & director of content solutions"  
+## [28] "director <- pjublic relations director"              
+## [29] "director <- associate director/ marketing communicat"
+## [30] "director <- director of business development"        
+## [31] "director <- director of academic affairs"            
+## [32] "director <- lab director/archeologist"               
+##  [1] "consultant <- gender/public health consultant"         
+##  [2] "consultant <- media consultant"                        
+##  [3] "consultant <-  consultant"                             
+##  [4] "consultant <- computer consultant"                     
+##  [5] "consultant <- creative consultant"                     
+##  [6] "consultant <- it security consultant"                  
+##  [7] "consultant <- it consultant"                           
+##  [8] "consultant <- internet & media consultant"             
+##  [9] "consultant <- information technology consultant"       
+## [10] "consultant <- management consultant & entrepreneur"    
+## [11] "consultant <- speaker author consultant"               
+## [12] "consultant <- senior human resources consultant"       
+## [13] "consultant <- tax consultant"                          
+## [14] "consultant <- consultant and entrepreneur (small busin"
+## [15] "consultant <- writer and management consultant"        
+## [16] "consultant <- senior consultant programmer/analyst"    
+## [17] "consultant <- social media consultant"                 
+## [18] "consultant <- healthcare consultant"                   
+## [19] "consultant <- writing consultant"                      
+## [20] "consultant <- financial consultant"                    
+## [21] "consultant <- writer / lecturer / consultant"          
+## [22] "consultant <- business consultant"                     
+## [23] "consultant <- senior consultant"                       
+## [24] "consultant <- entrepreneur & consultant"               
+## [25] "consultant <- non-profit consultant"                   
+## [26] "consultant <- management consultant"                   
+##  [1] "analyst <- financial analyst"                    
+##  [2] "analyst <- social policy analyst"                
+##  [3] "analyst <- assoc. governmental program analyst"  
+##  [4] "analyst <- system analyst"                       
+##  [5] "analyst <- programmer/software analyst"          
+##  [6] "analyst <- analyst"                              
+##  [7] "analyst <- business / test analyst"              
+##  [8] "analyst <- market analyst"                       
+##  [9] "analyst <- systems analyst"                      
+## [10] "analyst <- policy analyst"                       
+## [11] "analyst <- systems programmer/analyst"           
+## [12] "analyst <- senior systems analyst"               
+## [13] "analyst <- research analyst"                     
+## [14] "analyst <- market research analyst"              
+## [15] "analyst <- tech analyst/gis"                     
+## [16] "analyst <- senior consultant programmer/analyst" 
+## [17] "analyst <- legislation analyst"                  
+## [18] "analyst <- senior records analyst"               
+## [19] "analyst <- environmental analyst"                
+## [20] "analyst <- research / gis analyst"               
+## [21] "analyst <- it analyst"                           
+## [22] "analyst <- programmer analyst"                   
+## [23] "analyst <- budget analyst"                       
+## [24] "analyst <- acounting analyst"                    
+## [25] "analyst <- computer systems analyst"             
+## [26] "analyst <- production operations support analyst"
+## [27] "analyst <- business systems analyst"             
+## [28] "analyst <- software analyst"
+```
+
+```r
 # Frequencies per column 
 # Unique distributions
+
 # Gender
-apply(resp_full["Gender"], 2, table)
+gender_table = as.data.frame(table(resp_full$Gender))
+colnames(gender_table) = c('Gender','Count')
+kable(gender_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(gender_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##        Gender
-## Female   2309
-## Male     1721
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Gender </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2309 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1721 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 # WorkStatus
-apply(resp_full["Work_Status"], 2, table)
+work_table = as.data.frame(table(resp_full$Work_Status))
+colnames(work_table) = c('Status','Count')
+work_table = work_table[order(work_table$Count,decreasing=TRUE),]
+kable(work_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options=c('striped','condensed'),full_width=FALSE)%>%
+  row_spec(row=1:dim(work_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##            Work_Status
-## full-time         2260
-## part-time          465
-## retired            174
-## student            837
-## unemployed         258
-```
+<table class="table table-striped table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Status </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2260 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 837 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 465 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 258 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 174 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 #Distributions across Gender and Work Status
-with(resp_full, table(Gender, Work_Status))
+genderwork_table = as.data.frame(table(resp_full$Gender,resp_full$Work_Status))
+colnames(genderwork_table) = c('Gender','Work_Status','Count')
+genderwork_table = genderwork_table[order(genderwork_table$Count,decreasing=TRUE),]
+kable(genderwork_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(genderwork_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##         Work_Status
-## Gender   full-time part-time retired student unemployed
-##   Female      1209       312      86     504        168
-##   Male        1047       152      88     333         89
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Gender </th>
+   <th style="text-align:left;"> Work_Status </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1209 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1047 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 504 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 333 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 312 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 168 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 152 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 89 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 88 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 86 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
-top10Jobs
+kable(top10Jobs,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(top10Jobs)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##          title count
-## 589    teacher    90
-## 349    manager    84
-## 48   assistant    65
-## 464  professor    56
-## 56    attorney    53
-## 218   engineer    46
-## 122    college    46
-## 179   director    45
-## 131 consultant    44
-## 31     analyst    38
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> title </th>
+   <th style="text-align:right;"> count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> teacher </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 90 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> manager </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 84 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> assistant </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 65 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> professor </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 56 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> attorney </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 53 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> engineer </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 46 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> college </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 46 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> director </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 45 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> consultant </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 44 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> analyst </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 38 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 # 4D:
 
 # Counts of participants per country in descending order
 
-countryCt <- count(resp_full, resp_full$Country_Res)
+countryCt = as.data.frame(table(resp_full$Country_Res))
+colnames(countryCt) = c('Country','Count')
+sortedCC = countryCt[order(countryCt$Count, decreasing = TRUE),]
+kable(head(sortedCC,20),row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:20,bold=T,color='white',background='darkred')
 ```
 
-```
-## Warning: package 'bindrcpp' was built under R version 3.3.3
-```
-
-```r
-colnames(countryCt) <- c("Country", "Count")
-
-sortedCC <- countryCt[order(countryCt$Count, decreasing = TRUE),]
-
-print(sortedCC)
-```
-
-```
-## # A tibble: 91 x 2
-##           Country Count
-##            <fctr> <int>
-##  1  United States  2785
-##  2         Canada   243
-##  3 United Kingdom   177
-##  4           <NA>   160
-##  5      Australia    99
-##  6          India    78
-##  7          Italy    62
-##  8        Germany    36
-##  9         Brazil    20
-## 10        Ireland    19
-## # ... with 81 more rows
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Country </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> United States </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2785 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Canada </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 243 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> United Kingdom </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 177 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Australia </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 99 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> India </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 78 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Italy </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 62 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Germany </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 36 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Brazil </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 20 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Ireland </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 19 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Isreal </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 19 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Netherlands </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 18 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Sweden </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 15 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Norway </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 14 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> France </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Japan </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Spain </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> China </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Finland </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Mexico </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> New Zealand </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 # 4E:
@@ -476,16 +826,26 @@ print(sortedCC)
 resp_full$Others_Score <- as.character(resp_full$Others_Score)
 resp_full$Self_Score <- as.character(resp_full$Self_Score)
 
-viewMatch <- count(resp_full[which(resp_full$Self_Score == resp_full$Others_Score),])
-print(viewMatch)
+match_yes = sum(resp_full$Self_Score == 'yes' & resp_full$Others_Score == 'yes')
+match_no = sum(resp_full$Self_Score == 'no' & resp_full$Others_Score == 'no')
+match_either = as.data.frame(cbind(match_yes,match_no))
+colnames(match_either) = c('Others Agree I Procrastinate','Others Agree I Do Not Procrastinate')
+kable(match_either,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:1,bold=T,color='black',background='beige')%>%
+  column_spec(1:2,width='1cm')
 ```
 
-```
-## # A tibble: 1 x 1
-##       n
-##   <int>
-## 1  2846
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:right;"> Others Agree I Procrastinate </th>
+   <th style="text-align:right;"> Others Agree I Do Not Procrastinate </th>
+  </tr></thead>
+<tbody><tr>
+<td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; "> 2358 </td>
+   <td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; "> 482 </td>
+  </tr></tbody>
+</table>
 
 
 ## Question 5: Visualization and Deeper Analysis

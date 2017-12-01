@@ -144,78 +144,29 @@ if (!is.element(&quot;curl&quot;, installed.packages()[,1]))
 if (!is.element(&quot;stargazer&quot;, installed.packages()[,1]))
   install.packages(&quot;stargazer&quot;,repos=&quot;http://cran.rstudio.com&quot;)
 if (!is.element(&quot;stringi&quot;, installed.packages()[,1]))
-  install.packages(&quot;stringi&quot;,repos=&quot;http://cran.rstudio.com&quot;)</code></pre>
+  install.packages(&quot;stringi&quot;,repos=&quot;http://cran.rstudio.com&quot;)
+if (!is.element(&quot;scales&quot;, installed.packages()[,1]))
+  install.packages(&quot;scales&quot;,repos=&quot;http://cran.rstudio.com&quot;)
+if (!is.element(&quot;kableExtra&quot;, installed.packages()[,1]))
+  install.packages(&quot;kableExtra&quot;,repos=&quot;http://cran.rstudio.com&quot;)
+if (!is.element(&quot;knitr&quot;, installed.packages()[,1]))
+  install.packages(&quot;knitr&quot;,repos=&quot;http://cran.rstudio.com&quot;)</code></pre>
 </div>
 <div id="load-custom-functions." class="section level2">
 <h2>Load custom functions.</h2>
 <pre class="r"><code>#Custom functions for Case Study 2
+#Please open MSDS6306_Final_Case_Study_Functions.R for more details
 #Last modified 11/26/17
 
-#Wrapper function for gsub that maintains object classes
-gsubkeep = function(pattern='',replacement=NA,x, ignore.case=FALSE, perl=FALSE,
-                                        fixed=FALSE, useBytes=FALSE) {
-    if (is.null(dim(x)) &amp;&amp; !is.null(class(x))) {
-        colObj = x
-        colClass = class(colObj)
-        colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-                                    ignore.case=ignore.case,perl=perl,fixed=fixed,
-                                    useBytes=useBytes)
-        if (colClass == 'factor') {
-            colObj = as.factor(colObj)
-        } else { 
-            colObj = as(colObj,colClass) 
-        }
-        x = colObj
-    } else {
-        for (i in 1:length(x)) {
-            colObj = x[,i]
-            colClass = class(colObj)
-            colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-                                        ignore.case=ignore.case,perl=perl,fixed=fixed,
-                                        useBytes=useBytes)
-            if (colClass == 'factor') {
-                colObj = as.factor(colObj)
-            } else { 
-                colObj = as(colObj,colClass) 
-            }
-            x[,i] = colObj
-        }
-    }
-    return(x)
-}
-
-#Function that row-stacks the identified columns of a list of data frames
-#Parameters: {x: list of data frames, elements: the particular data frames within x to stack, 
-#             cols: the particular columns to stack, colname: names of the columns selected with cols parameter }
-list_rowbind = function(x,elements=1:length(x),cols = columns(1:length(x[[1]])),
-                                                colname = colnames(x[[1]])[cols]) {
-    result = data.frame()
-    for (i in elements) {
-        append_df = x[[i]][,cols]
-        colnames(append_df) = colname
-        result = bind_rows(result,append_df)
-    }
-    return(result)
-}
-
-#Function that creates a list of indices and corresponding strings which match keywords
-#Paratermers: {x: a vector (to be coerced to character) to search, findtext: a vector of keywords to look for}
-match_list = function(x,findtext='') {
-    findtext = as.character(findtext)
-    x = tolower(as.character(x))
-    result = list(length(findtext))
-    for (i in 1:length(findtext)) {
-        result[i] = list(cbind('Idx'=grep(findtext[i],x),'Match'=x[grep(findtext[i],x)]))
-    }
-    return(result)
-}</code></pre>
+source('MSDS6306_Final_Case_Study_Functions.R')</code></pre>
 </div>
 <div id="question-2-read-in-and-clean-raw-data" class="section level2">
 <h2>Question 2: Read in and clean raw data</h2>
 <pre class="r"><code># 2: Read in and clean raw data
 
 # 2A: Read in CSV
-dataset_raw &lt;- read.csv(&quot;C:\\SMU_INTRO_TO_DS\\CASESTUDY2\\Data\\Procrastination.csv&quot;)
+filepath = 'C:\\Users\\Jose\\Downloads\\Case_Study_2\\CaseStudy2_MSDS'
+dataset_raw &lt;- read.csv(paste(filepath,'Procrastination.csv',sep='\\'))
 
 dim(dataset_raw)</code></pre>
 <pre><code>## [1] 4264   61</code></pre>
@@ -323,8 +274,8 @@ resp_full = merge(x=resp_answers,y=resp_attrwHDI,by.x='ID',by.y='ID',all.y=TRUE)
 
 # 4B:
 #statistics table
-stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],type='text',
-                    summary.stat=c('n','min','p25','median','p75','max','mean','sd'))</code></pre>
+stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],
+                    summary.stat=c('n','min','p25','median','p75','max','mean','sd'),type='text')</code></pre>
 <pre><code>## 
 ## ==============================================================================
 ## Statistic    N    Min   Pctl(25) Median Pctl(75)   Max      Mean     St. Dev. 
@@ -343,30 +294,41 @@ h1 = gghistogram(resp_full,x='Age',y='..count..',
                                  bins=10,
                                  fill='blue',
                                  size=2,
-                                 title='Age',
-                                 color='white'
+                                 title='Histogram of Age',
+                                 color='white',
+                                 ylab='Count'
 )
 
-h1 + font('x.text',size=8)</code></pre>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-<pre class="r"><code>h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
-                                 bins=10,
+h1 = h1 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
+
+
+h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
                                  fill='blueviolet',
                                  size=2,
-                                 title='Ann Inc',
-                                 color='white'
+                                 bins=25,
+                                 title='Histogram of Annual Income',
+                                 color='white',
+                                 ylab='Count',
+                                 xlab='Annual Income'
 )
 
-h2 + font('x.text',size=10)</code></pre>
-<pre><code>## Warning: Removed 415 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAAAh1BMVEUAAAAAADoAAGYAOmYAOpAAZrY6AAA6ADo6AGY6OgA6OpA6ZmY6kNtmAABmADpmAGZmOgBmZgBmZjpmkNtmtrZmtttmtv+QOgCQOjqQ2/+2ZgC2kDq225C22/+2/7a2///ElfDbkDrbtmbbtpDbtrbb25Db////tmb/25D/27b//7b//9v///9Tm0O1AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAPkUlEQVR4nO3cC1sq6bGG4dYITiawMkkmGMlkGXIQAvz/35c+cW6hu+h6qW/1c197tLdaF9XmWZxEsy0QWPboBYBrCBShEShCI1CERqAIjUARGoEiNAJFaH0Eunl7er/xJevpqIcLwvD0EehqnE1ufAmBwqaPQOfPf3r+uP4lBAqbHgLN4/tXNrv5NfdfEAaoh0CX2Ww9ffncFndGX/77S/b0l+OjShno8Qf/90uW/fyP+y8cP7j7A9285bfv8/Jh0uYtK02Ojip1oPsP5ndbc7fuGAD3B7oaT4o3xU14XuDoc7vIRkdHlV2gh0/nEf/91h0D4P5AyyvP8mq0flvc3h+Oqi+qA919kLukaOnuQNfTbH/Dnd/J/KzeHo52XzU6/nR5rQvcdnegy7rPLI+PQNG3ewOtbrZz8/wOZetAuYlHS/cGWj06qg9aB5o/SPrrdvvvMZnihnsDXeweiRc/kG8daP00080f4WPw7gx0Pd0/l7nIJu0DLZ+o/x1P1OMWXm6H0AgUoREoQiNQhEagCI1AERqBIjQCRWgEitDuDZTA4YpAERqBIjQCRWgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBIrQCBShEShCI1CERqAIjUARGoEiNAJFaASK0EIG+s+uPJZACASK0AgUoREoQiNQhEagCI1AERqBIjQCRWgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBIrQCBShEShCI1CERqAIjUARGoEiNAJFaASK0AgUoREoQiNQhEagCI1AERqBIjQCRWgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBIrQCBShEShCI1CERqAIjUARGoEiNAJFaASK0AgUod0IbJFlT+/FwfLioNW8DYFi53pg87zF1XiWZ5kfFP8dDlrNGxEodq4Gtp5O8reLl8/NW3EwH233B63mrQgUO1cDq64q87flteh28fyxP2g1b0Wg2GkTaDZbvZYHeaC7g3K24LEUgWLnamD19WU221+V7g9azVsRKHbaPEgiUDzMjcDmWfb8/dt78018i3kbAsVOi8BWP33wIAkP0iIwnmbC49x4HnS0PXt+nifqIXU9sPV094PNxcVBm3kjAsUOLxZBaASK0AgUoREoQiNQhEagCI1AERqBIjQCRWgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBIrQCBShEShCI1CERqAIjUARGoEiNAJFaASK0AgUoREoQiNQhEagCI1AERqBIjQCRWgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBIrQCBShEShCI1CERqAIjUARGoEiNALlX0NoBEqgoREogYZGoAQaGoESaGgESqChESiBhkagBBoagRJoaARKoKERKIGGRqAEGhqBEmhoBEqgoREogYZGoAQaGoESaGgESqChESiBhkagBBoagRJoaARKoKERKIGG9gMF2nnKOOZxxvgKgdqmIEKgtimIEKhtCiIEapuCCIHapiBCoLYpiBCobQoiBGqbggiB2qYgQqC2KYgQqG0KIgRqm4IIgdqmIEKgtimIEKhtCiIEapuCCIHapiByI7DVOMtGxcEyy57eTw5azduISiPQBFwPbPnyuV1P80KXeZTFf4eDVvNGotIINAFXA9u8TfK3i+eP6mA+2u4PWs1biUoj0ARcDWz1Wl9VrsazbVnq/qDVvJWoNAJNwNXAls/fp1k22ZW6zAPdHZSzBY+lRKURaAKuBrbI8hI3b6P6Xmf+dn/Qat5KVBqBJuB6oE/19SWBnk9B5Diw9bequ+XuLmZ1XzO/39l8E38+3xtRaQSagKZA94+BqhDzKHmQdD4FkUNg82xvUn9oPS1yXNqfZpI2I70wiDRdgx4sXj6rJo1P1EubkV4YRG7cRC9316eL3U84F11+1CltRnphEDkJbPNW3cQf7mJ2m78gbUZ6YRA5CWzeocym+QvSZqQXBpGT+6DTyV3zl6TNSC8MIqeBzu6avyRtRnphEDkOrPih5j3zl6TNSC8MIieBLbPOV6EEClenN/EZj+JbTkHE93eSpM1ILwwiBGqbggg38bYpiDQEtuzydD2BwlVTYPMOzzYRKFw1BdblKpRA4aopsAWB3pyCSENg5V9quGP+iLQZ6YVBpOlR/Munbf6StBnphUGE50FtUxAhUNsURE4DK/6Y3clvdHScPydtRnphEDl7NdNkW/zWUYfXNBEoXJ2+HnRSvl90eJREoHDV9Ip6nqi/PQURrkFtUxDhPqhtCiI8irdNQYTnQW1TECFQ2xRETgOb5w+Plvs/btd9/py0GemFQeQksHn58J1XM7WYggjPg9qmINL4PCiB3pyCyElg1TOgq/HEOH9B2oz0wiDC86C2KYjwNJNtCiIEapuCCIHapiBCoLYpiBCobQoiBGqbggiB2qYgQqC2KYgQqG0KIgRqm4IIgdqmIEKgtimIEKhtCiIEapuCCIHapiBCoLYpiBCobQoiBGqbggiB2qYgQqC2KYgQqG0KIgRqm4IIgdqmIEKgtimIEKhtCiIEapuCCIHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRCYHaprRS2NEJgdqmtFLY0QmB2qa0UtjRyY1AF1n29F4cLC8O2sx3/sYSaD/fxwfs6OR6YIvnj+2y6LF4c3rQar7zN5ZA+/k+PmBHJ1cDW08n2+3mbZT/lx9s50cHreYJtCcp7Ojk9n3QItDVeLYtr0/3B+3mO39jCbSf7+MDdnRyO9BFfoO+ei1u1Jd5oLuDcrZwdbbzN5ZA+/k+PmBHJ7cCzR8TTbb1vc787f6g3XznbyyB9vN9fMCOTtrcxL98Euj5lFYKOzpp8TxonmPzTfzt+c7fWALt5/v4gB2dtAg0f2DEg6TzKa0UdnRyNbAqx/z6kqeZzqe0UtjRyfXA5i+fVZM8UX82pZXCjk5u3MTPsywrrkUPP/Nc8KNOvRR2dMKLRWxTWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWins6IRAbVNaKezohEBtU1op7OiEQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3pFAbVNaA96RQG1TWgPekUBtU1oD3rFzoMsse3pvO995aQLt5/v44+zYNdBlXufyqFACVRjwjh0D3bxN8rfzkXUe6KZjYKvxLH+7eP4wzgPddA30tbh1X1aBZgWHnYC9joFVdz+P7oQSKFwRKEK75ybeMA90w4MkhMbTTAjN94l64E6dA1t0+VEncCffF4sAdyJQhEagCI1AERqBIjQCRWgEitAIFKERKEIjUIR2d6CAh74CNWb9kEt1wsl4ItC7cTKeCPRunIyncAsBxwgUoREoQiNQhEagCI1AEZok0M1bdvhN+vOPNn8ystVPX57MapxlL58P2Mmo2Hd28dFIJyMJdD46/lX6s482fzKw9bThH1R9FsukziQ/ldnJL5HXIp2MItD1t/fTa53F6PDRi09Gt8j+cLLu8cls55MHbWWzzK8gN29HV6HxTkYRaHGyxUmvp/WNefltqD+6+2Qy/vNZ/ntqPJnN3xI6kVpxLRr4ZISBFv9UF+V9mqQDrTZvPpn1t99nl7eYseVnEflkhIHW75blq6me3tMO9IuTec1vJ/6Y0P2V6g/BRT4ZZaDjrP6zOT/ANWjzyRSfTetkFsU5RD4Z4YOkw0OhpB8kHa5BKyePK7YR/jftoPpDmpFPRvg0U3FPpzrv8tuQ7NNM+/uglydT/GXf1c+PfuqwvervEYc+GUmg9YPE/N3xne7DR1N8or75ZBZZUiczL+91ziKfDD/qRGgEitAIFKERKEIjUIRGoAiNQBEagSI0AkVoBNqXeTZp9XXF6y93Gl7NjlME2pPV65/b/VyQQDsh0J4snn8bX/76WQMC7YRA+7F5G+X/ty36+3Vavf5i935WRzkvX5dxHuju68rXZmRpvaxLgUD7UVwXli/+XU+ro8P7OsriNYXFV1wEWk9Wn5s87AyCItB+zF8+q7zKN6vx7PC+CrR86W/+/18GevT1uECgvViNJ/nbef4waR/k2fviq5b72/za8nANu2p3D3ZwCLQXi/ovq8++DrR4+e9vTdegdaCvPF5qQqB9qB4f5Z2Nvgy0vIZsvInnGvQaAu3D7umiowdFh/eTMsziN3zy2/gvA+U+aDMC7cO8/htb+V3R80A3b8UfRshm1ZVnNvkq0PJRfH1NjAMC7cHh5nn+/P38vmdeZfZrdR/06X1eF1k7DpTnQRsRKEIjUIRGoHrlX5rJdn9tBlcRKEIjUIRGoAiNQBEagSI0AkVoBIrQ/g9FhlnRetVKtwAAAABJRU5ErkJggg==" /><!-- --></p>
-<pre class="r"><code>h3 = gghistogram(resp_full,x='HDI',y='..count..',
-                                 bins=5,
+Annual_Inc_Clean = resp_full[which(!is.na(resp_full$Annual_Inc)),'Annual_Inc']
+
+h2 = h2 + font('xy.text',size=12) + 
+  theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30) +
+  scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
+
+h3 = gghistogram(resp_full,x='HDI',y='..count..',
+                                 bins=35,
                                  fill='cadetblue3',
                                  size=2,
-                                 title='HDI',
-                                 color='white'
+                                 title='Histogram of HDI',
+                                 color='white',
+                                 ylab='Count'
 )
+
+h3 = h3 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
 DPMetric &lt;- resp_full[&quot;DP_Avg&quot;]
 DPMetric$Variable &lt;- 'DP_Avg'
@@ -390,19 +352,18 @@ h4 = ggboxplot(metrics,x='Variable',
                              y='Value',
                              color='Variable',
                              palette='jco',
-                             size=1.5
-)
+                             size=1,
+                             xlab='')
 
 
-h4 + font('x.text',size=10)</code></pre>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAAAgVBMVEUAAAAAADoAAGYAOpAAZmYAZpAAZrYAc8I6AAA6ADo6AGY6Ojo6OpA6kNtmAABmADpmAGZmZmZmkJBmtv+GhoaQOgCQOjqQZgCQkGaQtpCQ2/+2ZgC2Zjq225C2/7a2///NU0zbkDrb/7bb/9vb///vwAD/tmb/25D//7b//9v////ajt7wAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAUhUlEQVR4nO3dC1/byBWGcQMtYZOYJHW87eJmibvEt+//AasZXSxjyX4tzmiOl+f5tVmwDxoBfyRfuEx2RI6b5N4BolMBlFwHUHIdQMl1ACXXAZRcB1ByHUDJdQAl1wGUXAdQch1AyXUAJdcBlFwHUHLd+wL64cMHq039+vXLalO73ffv38229fPnT7NtOQigAwPoOL0roB/sgP6yBPrdEOhPgF5jH143fFO/XvemHfv+ujds6+fr3rRnTnoXQI94Dhd6xPNNQo94vkHoEc+/h1CAXhZAR84/0O389rl64f7wms3jbP/K+mHWcWmsy+dAoF0+hwPt8jkUaJdPgI7SajI7+G93Z4B2XrB+mBRN6xduntqrHrxWd+SxdUH5FuuPz/LWjjzuL9g8XrhnRx6bC7bzYgvF1/YifH2vwkaLF4vdPLjy3OazdQVAN4/lB3Bx93JiahDQ8FnaPE7LFw4+Ndv5t1fH69gJoNVbBKDq1vqBxvfmoj3rBxpghrPPMnz8Ft/ia9MaaH3luc1n6wqA7hbxHB8+XcXLxRd8+Nx9+c/k9s9Isbpk/fCvh3jMiUCX5fGnrPcUX332bytS2/me9vrjj+pTeNCJU3z1Fg1QYWu9p/hCULV/8rZ6T/GbL0/7TW2+/vn1OVxUAW2uPLf5bF0D0PLgGI8i4Qt+WbyweSwOB5Fifcn6If4zjZcuq5fLzgBtPl1tBsv73aI8fhWXFufZf5bXnQBavkU3qp6t9QLdi5G31Qu0OT6GD8z681+/P+1Wdy/VCke36/s2n61rAFp+FMMZPn7BB6/xcBo+4s0lpcfl7XNxaXmwXVV3rs4BDZ+I+lBaLxk2W3waA4z15/8F8pMzQKu3aJ3iz2+tF+iquTUjb6v/TlK4ORsZFvCW5f/umy+B5sozm8/WNQAN7Pa3MVfhjB4PnvWtzXhJc5gtLq3urtRvIQB9fVdkVR2gi0/lclq/sjsFtB7qupPUt7XTQBdhG/K2Tt6LLxgWClfFwXEWNrCYtc/q5ZVnNp+tqwAaP2LxIFLctrz98dAGWl+y/i2i/C0CnZS1gB5sr+cUvy/etw2HlnhKDPcutvtT/MFkfcH+LeojqLC13jtJ+1uI8rb67yTFwoenOCR+rW+GHmy3/Nid3Hy2rgJocXr/K57m40Fx3QbaXHJ8BG1S7yTtK18Pn7f//vH5RTmCNm/RAbR3a+fuJHUA7d1W7xG0vHkQnG1/L96k+rfa7v7KM5vP1nUAXd38Eb/I48dz1T7FN5dUt0HvXuJt0IMP6mmg+wdz9i2qB7am8XHDjXAbtHmLDqC9W+t/oD6+N9v5zRHQ3m2duJMUbi+UjzF9ih+jb9PmGN268vTms3UdQLfzT/FjWB48qw9dcwSNl8R78bXdZbzHXx9H+4E+VDcEXjEoH3yJXw+br89x7h/lRX1A92/x4who/9b6gTYPoMvbOnEbNDwQFz985ZllVT4qVz1H0Vx5evPZug6gxdfxtPpvcYdhEc/j+9ug8ZLycdDWpZP9Pd8+oBdUf+r6H2YasrV+oJdv69SdpDe0Aeh4DYAZCjfJWg/0xIbB7NnaEJd92zJy2bf50QNou/LEN3n9bPTy+CIFqLw1Aai8rWFA9Xd87AA6rOFH0I4GH0E7sjyCeuhdAeVnkq6v9wWUri6AkusASq4DKLkOoOQ6gJLrAEquAyi5DqDkOoCS6wBKrgMouQ6g5DqAkusASq4DKLkOoOQ6gJLrAEquAyi5DqDkOoCS6wBKrrsMKJxp5ABKrgMouQ6g5DqAkusASq4DKLkOoOQ6gJLrAEquAyi5DqDkutPkwt/Cbf81XIDSyJ0mt/8ro8o0kXmnyb3+K04ApZE7TW55f/g6QGnkTpNbfCr/4qg2TWTeSXKbx/hHnEuh8W/lJdkHwz8AZ5XpH5IzyvLv0Rk1wp+1E8i1bogCNGMA7Sn8SXZ9ekAAlQJoT63HmgCaMYAeVR47OcX7CKDHLcLDTIv93XiAZgygHS2Ke+6z/asAzRhArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoF0O4Wdy8XTA8JoFIA7Ww1AaiPANrV5hGgTgJoV8u7fwPURwDtaP3bU30bdBJKsg8AlQLocdv5lDtJXgLoccsCJ0CdBNCjihM8DzO5CaBHLSdlM2l6cACVAmh3HEGdBNDuAOokgHYHUCcB1HpaDaBSALWeVgOoFECtp9UAKgVQ62k1gEoB1HpaDaBSALWeVgOoFECtp9UAKgVQm+kPIzXs/RV7n0B/jtNF+2QOdCyfaYm+S6Aj+byMqDXQEX0C1LbxfAL0zQH07wz0ok0O7OqBfh+nC/boQjlDA6hFyYGO5PMSogC17MqBjucToIcBVAqgagDtbAygKbc/ZBmAWgZQ82UAahlAzZcBqGUANV8GoJYB1HwZgFoGUPNlAGoZQM2XAahlADVfBqCWAdR8GYBaBlDzZQBqGUDNlwGoZQA1XwaglgHUfBmAWgZQ82UAahlAzZcBqGWXrfNrnPQdAqjauwA6ks8LiAJU7T0AHc8nQM2XAShAqwBq2aVAU+7LgGUAqgZQswCaYhmAmgXQFMsA1CyAplgGoGYBNMUyADULoCmWAahZAE2xDEDNAmiKZQBqFkBTLANQswCaYhmAmgXQFMsA1CyAplgGoGYBNMUyADULoCmWAahZAE2xDEDNAmiKZQBqFkBTLANQsy4FOlLy/gPUMoACdNA0QKUAqgZQswCaYhmAmgXQFMsA1CyApljmkNzmcXL3spiK010BVAqgagfkVjdPy7uXzWOvUIAaLQNQtTa57Xy6K4DulrfPwnR3AJW6SM7w/mZAN4+zCHQF0CEBNMUyXUfQRfH/89PdAVQKoGodt0GXk5k03RlApQCqdnQvfjK5eRKnuwKoFEDVeBzULICmWAagZgE0xTKH9+InZdyLHxJAUyzTQa7/USaAWi0DULUucov7S6YPA6gUQNW6yPFA/aAAmmKZLnI81TkogKZYpoPc5pFT/JAAmmKZrnvxrWc6l4eP2wPUaBmAqp0mF072q5ZQDehYqe8jQKV+jtcF78JJcvE7Q7fz/RkfoEbLAFTtPDmAJlgGoGoNueZppNfPJC05xdsvA1C1c+RWk0n1AyCR7tntAVQKoGrKKX5/r/56gY6UuksAVTsgV5/mDx+ob92NByhAcwJd3L0s73frh8PvqG+9DlCAZgQaHlVahZ/qrM/pJc3WU/PX+0A9QM92oZyhvQnobLf++Bz/XxZ+fC78KF3XdHcAlQKo2uuf6tx8eWoB3S2KW6Sz7unuACoFULUDcuGZzcV0f4o/Pd0ZQKUAqnZIbnEf7sn/Hb+jHqBnuwagb5/2CjTlvgxYBqBqrac6e39dQ8d0bwCVAqjawXPxvd+ofDTdG0ClAKrWIredn/ytIq+mewKoFEDVjn/1Tf+vrwWo2TIAVTsitzrxexsAarXM9/GS9/9KgO74seOBATTFMl1H0N7H6QFqtgxAxbgNahZAUyzDvXizUi9zkbYBOQfK46BvDaApluGZJLMAmmIZnos3C6AplgGoWQBNsQxAzQJoimUAahZAUywDULMAmmIZgJoF0BTLANQsgKZYBqBmATTFMgA1C6AplgGoWQBNsQxAzQJoimUAahZAUywDULMAmmIZgJoF0BTLANQsgKZYBqBmATTFMgA1C6AplgGoWQBNsQxAzQJoimUAahZAUywDULMAmmIZgJoF0BTLANQsgKZYBqBmATTFMgA1C6AplgGoWQBNsQxAzQJoimVSAB0rda9/jddFH80LGwPoSF2wVwAFaNX7ADqmUHm3ASoFUIC+JYBaT6tdhG2cUmMbUnKgl3chtiEBtDOASgE0VwCVAmiuACoF0FwBVAqguQKoFEBzBVApgOYKoFIAzRVApQCaK4BKATRXAJUCaK4AKgXQXAFUCqC5AqgUQHMFUCmA5gqgUgDNFUClAJorgEoBNFcAlQJorgAqBdBcAVQKoLkCqBRAcwVQKYDmCqBSAM0VQKUAmiuASgE0VwCVAmiuACqVHeh2PplMpur00AAqBdCjtvObp91ycq9NDw6gUgA9av0wK/5d3j5L04MDqBRAe1oVh1F9ekAAlQJoT4vyCDoJJdkHgEoBtLtV614SQDMG0M5WrftIAM0ZQLtqHz8BmjWAdrQ88AnQnAH0uOVkdsH00AAqBdCj1g/TwwsAmjGAHrWMDy1NeBzURQC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2gUgC1nlYDqBRArafVACoFUOtpNYBKAdR6Wg2g1xpAcwVQKYDmyiVQTvHG02oAlfru70YoQHMFUCmA5gqgUgDNlUeg3Aa1nlYDqBRHUOtpNYBKAdR6Wg2gUgC1nlYDqJY7nwDNlkegHEGtp9UAKgVQ62k1gEoB1HpaDaBa7nwCNFsAlQJorjwC5RRvPa0GUCmAWk+rAVQKoNbTagDVcucToNnyCJQjqPW0GkClAGo9rQZQKYBaT6sBVMudT4BmyyNQjqDW02oAlQKo9bQaQKUAaj2tBlAtdz4Bmi2PQDmCdrb++HzB9KAAKgXQrjaPtwD1EUA7Wk0mAPWSO5/5ga4m0xVAncQRtLMG6CSUeG/oRA6BjpAOVJqmdAG0M4C66T36BCj5DqDkOoCS6wBKrgMouc7DN4sQ9QZQch1AyXUAJdcBlFwHUHIdQMl1ACXXAZRcdyFQonEaBjRVPvbiIIe75HGfku+Sj/fZx14c5HCXPO4TQHPlcJc87tM7AUrUE0DJdQAl1wGUXAdQch1AyXUjA10/hGcJpvULN0+t61YHr41Xue7647Ojfdo8OvkwbefF+ve73eJ+F39V1y68WP9KzvrKlDs3NtDwrm0ep9WvHW2/P9v5t/v+N0xXtW4A6maf1g8zJx+mAHM7v98t716KV77F16Y10PrKlDuXA2j4SdHyhe181rrqR/t35Y64S3HdBqiDfSoMlKtn36XNl/rsUiy6+frn1+dwUQW0uTLlzmUB2ryP7Y/88n63KA8ZxaXFqe2fretSVq7brSHTPu0/57l3qTk+bh5nu/Xnv35/2q3uXqr9Ozh4ptq5LEDD3teH0vqa8OVYvO/hc7H+/L/iw7GcjIKhWrd1is+/T2F/yrLvUrgxHBkW8Jbl/+6bL6DmyoQ7lw3o61v/4ZMSvkyL9385rV8ZoXqprjtJOfdptwi74mGXCoaFwlVxcJyF5Rez9lm9vDLhzuU9xe+LdwjD12M8j4Sb5NtRTqf7desjaP592u1v4/nYpfVvT+GQ+LW+GXqwV+HKhDuX907S6yvCO/vfPz6/jHe0atbtAJprn+o7SR1Ax96l8sZFcLb9vViw+rfaq/2VCXcu78NM+xbliaK4pRMebNuMdnuvWbcDaK59Cg8zTcNn/uYI6Ni7tJ2HWxvlY0yfwlfN8tu0OcK3rky3c1keqJ/tXgMtH7GIX5Sbr89x7h9fRnhAer/ujyOgufYpVD8Enn+XipvCk0iwfDB2FT959dMtzZXpds7vU52bsTBckMN9crhL+wx2zifQcDvm4Pc+OsjhPjncpX1GO5cbaHm2mLx+Cnd5fNF4Odwnh7u0L+nO5QZKdDKAkusASq4DKLkOoOQ6gJLrAPr2tvPb+kcgXn2D5MFz0fHb5I8updMB1KBV9ZTz6uRTzwAdEkAN2jxW3ybRPC/dFUCHBFCLFvEcH75Lq/wGivAjb1/+M7n9M1KsLlk//OshfotFBLosv92CzgRQi8qDY/x+n/A9Z8vihc1j/f2Q9SXrh/hP9Y1o1ct0JoBaVN47Cmf4+P07wWs8nAaKzSWlx+Xtc3FpebB1+40ejgKoSQW7/W3MVTijx4NnfWszXtIcZotLq18W8cCN0XMB1KR41o7Hw+K25e2PhzbQ+pLyh3eKfwPQ6jexA/RcALVpcfdXPM3Hg+K6DbS55PgISucDqE2rmz/iATLerFy1T/HNJdVt0LuXeBuUY6cWQG3azj/FB0HLg2f1M2PNETReEu/F13aX8R4/x9GzAdSoZfWoZvw+8kU8j+9vg8ZLysdBW5dOuBN/PoCS6wBKrgMouQ6g5DqAkusASq4DKLnu//f76DuqrfZMAAAAAElFTkSuQmCC" /><!-- --></p>
-<pre class="r"><code>ggarrange(ggarrange(h1,h2,h3,ncol=3,labels=c('1','2','3')),
-                    h4,
+h4 = h4 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30)
+
+ggarrange(h1,h3,
+                    h2,h4,
                     nrow=2,
-                    labels='4')</code></pre>
-<pre><code>## Warning: Removed 415 rows containing non-finite values (stat_bin).</code></pre>
-<pre><code>## Warning: Removed 192 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+                    ncol=2)</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <pre class="r"><code># Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
 # distribution with peaks around the ages of 25, 45 and 55. THe Annual Income is more right-skewed.
 
@@ -435,65 +396,725 @@ keywords = jobs_count[1:10,]
 keywords_del = c('and','of')
 top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 
+#For the codebook only
+#These are the job assignments we subjectively made to get the top10 job counts shown:
+top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
 
-# Frequencies per column 
+for (i in 1:length(top10Jobs$title)) {
+print(paste(tolower(as.character(top10Jobs$title[i])),'&lt;-', unique(unique(top_jobs[[i]][,2]))))
+}</code></pre>
+<pre><code>##  [1] &quot;teacher &lt;-  teacher&quot;                              
+##  [2] &quot;teacher &lt;- efl teacher/ professional researcher&quot;  
+##  [3] &quot;teacher &lt;- dance teacher&quot;                         
+##  [4] &quot;teacher &lt;- esl teacher/biologist&quot;                 
+##  [5] &quot;teacher &lt;- freelance esl teacher&quot;                 
+##  [6] &quot;teacher &lt;- special education teacher&quot;             
+##  [7] &quot;teacher &lt;- yoga teacher&quot;                          
+##  [8] &quot;teacher &lt;- teacher assistant&quot;                     
+##  [9] &quot;teacher &lt;- musician/student/teacher&quot;              
+## [10] &quot;teacher &lt;- teacher and full time doctoral student&quot;
+## [11] &quot;teacher &lt;- teacher's assistant/afterschool leader&quot;
+## [12] &quot;teacher &lt;- asst. pre-school teacher&quot;              
+## [13] &quot;teacher &lt;- student/teacher&quot;                       
+## [14] &quot;teacher &lt;- theater artist/ teacher&quot;               
+## [15] &quot;teacher &lt;- early child hood teacher&quot;              
+## [16] &quot;teacher &lt;- teacher / administrator&quot;               
+##  [1] &quot;manager &lt;- sales manager&quot;                           
+##  [2] &quot;manager &lt;- manager&quot;                                 
+##  [3] &quot;manager &lt;- system manager&quot;                          
+##  [4] &quot;manager &lt;- quality manager&quot;                         
+##  [5] &quot;manager &lt;- project manager&quot;                         
+##  [6] &quot;manager &lt;- deputy practice manager&quot;                 
+##  [7] &quot;manager &lt;- office manager / accountant&quot;             
+##  [8] &quot;manager &lt;- it manager&quot;                              
+##  [9] &quot;manager &lt;- divisional manager of a large cosmetics&quot; 
+## [10] &quot;manager &lt;- regional sales manager&quot;                  
+## [11] &quot;manager &lt;- freelance project manager&quot;               
+## [12] &quot;manager &lt;- manager - analytical and environmental s&quot;
+## [13] &quot;manager &lt;- program manager and acting director&quot;     
+## [14] &quot;manager &lt;- operations manager&quot;                      
+## [15] &quot;manager &lt;- case manager&quot;                            
+## [16] &quot;manager &lt;- restaurant operations manager&quot;           
+## [17] &quot;manager &lt;- legal assistant / office manager&quot;        
+## [18] &quot;manager &lt;- human resource manager&quot;                  
+## [19] &quot;manager &lt;- theater general manager&quot;                 
+## [20] &quot;manager &lt;- office services manager&quot;                 
+## [21] &quot;manager &lt;- manager it&quot;                              
+## [22] &quot;manager &lt;- accounting manager&quot;                      
+## [23] &quot;manager &lt;- office manager&quot;                          
+## [24] &quot;manager &lt;- consulting manager&quot;                      
+## [25] &quot;manager &lt;- ehs manager&quot;                             
+## [26] &quot;manager &lt;- program manager&quot;                         
+## [27] &quot;manager &lt;- senior project manager&quot;                  
+## [28] &quot;manager &lt;- manager,interacitve media&quot;               
+## [29] &quot;manager &lt;- financial risk manager&quot;                  
+## [30] &quot;manager &lt;- please specify title manager for regulat&quot;
+## [31] &quot;manager &lt;- account manager&quot;                         
+## [32] &quot;manager &lt;- media relations manager&quot;                 
+## [33] &quot;manager &lt;- research manager&quot;                        
+## [34] &quot;manager &lt;- accounts payable / fleet manager&quot;        
+## [35] &quot;manager &lt;- business manager&quot;                        
+## [36] &quot;manager &lt;- product field test manager&quot;              
+## [37] &quot;manager &lt;- farm manager&quot;                            
+##  [1] &quot;assistant &lt;-  teaching assistant/graduate student&quot;    
+##  [2] &quot;assistant &lt;- assistant professor&quot;                     
+##  [3] &quot;assistant &lt;- administration assistant&quot;                
+##  [4] &quot;assistant &lt;- research assistant&quot;                      
+##  [5] &quot;assistant &lt;- instructional assistant online&quot;          
+##  [6] &quot;assistant &lt;- lab services assistant&quot;                  
+##  [7] &quot;assistant &lt;-  assistant&quot;                              
+##  [8] &quot;assistant &lt;- legal assistant / office manager&quot;        
+##  [9] &quot;assistant &lt;- client relationship assistant&quot;           
+## [10] &quot;assistant &lt;- accounting assistant&quot;                    
+## [11] &quot;assistant &lt;- graduate research assistant&quot;             
+## [12] &quot;assistant &lt;- legal assistant&quot;                         
+## [13] &quot;assistant &lt;- teacher assistant&quot;                       
+## [14] &quot;assistant &lt;- executive assistant&quot;                     
+## [15] &quot;assistant &lt;- it assistant&quot;                            
+## [16] &quot;assistant &lt;- graduate assistant&quot;                      
+## [17] &quot;assistant &lt;-  research/teaching assistant&quot;            
+## [18] &quot;assistant &lt;- fitness assistant / wellness mentor / ca&quot;
+## [19] &quot;assistant &lt;- assistant general counsel&quot;               
+## [20] &quot;assistant &lt;- teacher's assistant/afterschool leader&quot;  
+## [21] &quot;assistant &lt;- insurance broker's assistant&quot;            
+## [22] &quot;assistant &lt;- certified nurse's assistant&quot;             
+## [23] &quot;assistant &lt;- investment assistant&quot;                    
+## [24] &quot;assistant &lt;- academic assistant&quot;                      
+## [25] &quot;assistant &lt;- program assistant&quot;                       
+## [26] &quot;assistant &lt;- clinical research assistant&quot;             
+## [27] &quot;assistant &lt;- library assistant&quot;                       
+## [28] &quot;assistant &lt;- fulltime office assistant&quot;               
+## [29] &quot;assistant &lt;- reasearch assistant&quot;                     
+## [30] &quot;assistant &lt;- assistant district attorney&quot;             
+## [31] &quot;assistant &lt;- speech and language assistant&quot;           
+## [32] &quot;assistant &lt;- clinical trial assistant&quot;                
+## [33] &quot;assistant &lt;- student and administrative assistant&quot;    
+## [34] &quot;assistant &lt;- academic/career coach &amp; admin assistant&quot; 
+## [1] &quot;professor &lt;- college professor&quot;   &quot;professor &lt;- assistant professor&quot;
+## [1] &quot;attorney &lt;- attorney&quot;                                  
+## [2] &quot;attorney &lt;- attorney â&lt;U+0080&gt;&lt;U+0093&gt; associate&quot;                    
+## [3] &quot;attorney &lt;- attorney - self employed for 2 years â&lt;U+0080&gt;&lt;U+0093&gt; f&quot;
+## [4] &quot;attorney &lt;-  attorney-self employed&quot;                   
+## [5] &quot;attorney &lt;- editor attorney&quot;                           
+## [6] &quot;attorney &lt;- assistant district attorney&quot;               
+##  [1] &quot;engineer &lt;- audio engineer&quot;              
+##  [2] &quot;engineer &lt;- chiefe development engineer&quot; 
+##  [3] &quot;engineer &lt;- engineer&quot;                    
+##  [4] &quot;engineer &lt;- network engineer&quot;            
+##  [5] &quot;engineer &lt;- it support engineer&quot;         
+##  [6] &quot;engineer &lt;- software engineer&quot;           
+##  [7] &quot;engineer &lt;- network services engineer&quot;   
+##  [8] &quot;engineer &lt;- data warehouse engineer&quot;     
+##  [9] &quot;engineer &lt;- it engineer&quot;                 
+## [10] &quot;engineer &lt;- mechanical engineer&quot;         
+## [11] &quot;engineer &lt;- process engineer&quot;            
+## [12] &quot;engineer &lt;- environmental engineer&quot;      
+## [13] &quot;engineer &lt;- plant engineering supervisor&quot;
+## [1] &quot;college &lt;- college professor&quot;                      
+## [2] &quot;college &lt;- college faculty&quot;                        
+## [3] &quot;college &lt;- p-t college faculty &amp; p-t self-employed&quot;
+## [4] &quot;college &lt;- college administrator&quot;                  
+##  [1] &quot;director &lt;- technical director&quot;                      
+##  [2] &quot;director &lt;- director of a language program&quot;          
+##  [3] &quot;director &lt;- ict director&quot;                            
+##  [4] &quot;director &lt;- director&quot;                                
+##  [5] &quot;director &lt;- company director&quot;                        
+##  [6] &quot;director &lt;- director operations&quot;                     
+##  [7] &quot;director &lt;- director of software company&quot;            
+##  [8] &quot;director &lt;- director,social dvelopment&quot;              
+##  [9] &quot;director &lt;- program manager and acting director&quot;     
+## [10] &quot;director &lt;- deputy director&quot;                         
+## [11] &quot;director &lt;- volunteer director&quot;                      
+## [12] &quot;director &lt;- executive director&quot;                      
+## [13] &quot;director &lt;- program director&quot;                        
+## [14] &quot;director &lt;- it director&quot;                             
+## [15] &quot;director &lt;- food department director&quot;                
+## [16] &quot;director &lt;- proposal director&quot;                       
+## [17] &quot;director &lt;- associate director&quot;                      
+## [18] &quot;director &lt;- director of non-profit organization&quot;     
+## [19] &quot;director &lt;- television director&quot;                     
+## [20] &quot;director &lt;- casting director&quot;                        
+## [21] &quot;director &lt;- director / information technology&quot;       
+## [22] &quot;director &lt;- art director&quot;                            
+## [23] &quot;director &lt;- creative director&quot;                       
+## [24] &quot;director &lt;- program director at a non-profit organiz&quot;
+## [25] &quot;director &lt;- director of contract management&quot;         
+## [26] &quot;director &lt;- dept. director (non-profit)&quot;             
+## [27] &quot;director &lt;- writer &amp; director of content solutions&quot;  
+## [28] &quot;director &lt;- pjublic relations director&quot;              
+## [29] &quot;director &lt;- associate director/ marketing communicat&quot;
+## [30] &quot;director &lt;- director of business development&quot;        
+## [31] &quot;director &lt;- director of academic affairs&quot;            
+## [32] &quot;director &lt;- lab director/archeologist&quot;               
+##  [1] &quot;consultant &lt;- gender/public health consultant&quot;         
+##  [2] &quot;consultant &lt;- media consultant&quot;                        
+##  [3] &quot;consultant &lt;-  consultant&quot;                             
+##  [4] &quot;consultant &lt;- computer consultant&quot;                     
+##  [5] &quot;consultant &lt;- creative consultant&quot;                     
+##  [6] &quot;consultant &lt;- it security consultant&quot;                  
+##  [7] &quot;consultant &lt;- it consultant&quot;                           
+##  [8] &quot;consultant &lt;- internet &amp; media consultant&quot;             
+##  [9] &quot;consultant &lt;- information technology consultant&quot;       
+## [10] &quot;consultant &lt;- management consultant &amp; entrepreneur&quot;    
+## [11] &quot;consultant &lt;- speaker author consultant&quot;               
+## [12] &quot;consultant &lt;- senior human resources consultant&quot;       
+## [13] &quot;consultant &lt;- tax consultant&quot;                          
+## [14] &quot;consultant &lt;- consultant and entrepreneur (small busin&quot;
+## [15] &quot;consultant &lt;- writer and management consultant&quot;        
+## [16] &quot;consultant &lt;- senior consultant programmer/analyst&quot;    
+## [17] &quot;consultant &lt;- social media consultant&quot;                 
+## [18] &quot;consultant &lt;- healthcare consultant&quot;                   
+## [19] &quot;consultant &lt;- writing consultant&quot;                      
+## [20] &quot;consultant &lt;- financial consultant&quot;                    
+## [21] &quot;consultant &lt;- writer / lecturer / consultant&quot;          
+## [22] &quot;consultant &lt;- business consultant&quot;                     
+## [23] &quot;consultant &lt;- senior consultant&quot;                       
+## [24] &quot;consultant &lt;- entrepreneur &amp; consultant&quot;               
+## [25] &quot;consultant &lt;- non-profit consultant&quot;                   
+## [26] &quot;consultant &lt;- management consultant&quot;                   
+##  [1] &quot;analyst &lt;- financial analyst&quot;                    
+##  [2] &quot;analyst &lt;- social policy analyst&quot;                
+##  [3] &quot;analyst &lt;- assoc. governmental program analyst&quot;  
+##  [4] &quot;analyst &lt;- system analyst&quot;                       
+##  [5] &quot;analyst &lt;- programmer/software analyst&quot;          
+##  [6] &quot;analyst &lt;- analyst&quot;                              
+##  [7] &quot;analyst &lt;- business / test analyst&quot;              
+##  [8] &quot;analyst &lt;- market analyst&quot;                       
+##  [9] &quot;analyst &lt;- systems analyst&quot;                      
+## [10] &quot;analyst &lt;- policy analyst&quot;                       
+## [11] &quot;analyst &lt;- systems programmer/analyst&quot;           
+## [12] &quot;analyst &lt;- senior systems analyst&quot;               
+## [13] &quot;analyst &lt;- research analyst&quot;                     
+## [14] &quot;analyst &lt;- market research analyst&quot;              
+## [15] &quot;analyst &lt;- tech analyst/gis&quot;                     
+## [16] &quot;analyst &lt;- senior consultant programmer/analyst&quot; 
+## [17] &quot;analyst &lt;- legislation analyst&quot;                  
+## [18] &quot;analyst &lt;- senior records analyst&quot;               
+## [19] &quot;analyst &lt;- environmental analyst&quot;                
+## [20] &quot;analyst &lt;- research / gis analyst&quot;               
+## [21] &quot;analyst &lt;- it analyst&quot;                           
+## [22] &quot;analyst &lt;- programmer analyst&quot;                   
+## [23] &quot;analyst &lt;- budget analyst&quot;                       
+## [24] &quot;analyst &lt;- acounting analyst&quot;                    
+## [25] &quot;analyst &lt;- computer systems analyst&quot;             
+## [26] &quot;analyst &lt;- production operations support analyst&quot;
+## [27] &quot;analyst &lt;- business systems analyst&quot;             
+## [28] &quot;analyst &lt;- software analyst&quot;</code></pre>
+<pre class="r"><code># Frequencies per column 
 # Unique distributions
+
 # Gender
-apply(resp_full[&quot;Gender&quot;], 2, table)</code></pre>
-<pre><code>##        Gender
-## Female   2309
-## Male     1721</code></pre>
+gender_table = as.data.frame(table(resp_full$Gender))
+colnames(gender_table) = c('Gender','Count')
+kable(gender_table,row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%&gt;%
+  row_spec(row=1:dim(gender_table)[1],bold=T,color='white',background='darkred')</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Gender
+</th>
+<th style="text-align:right;">
+Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+2309
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+1721
+</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code># WorkStatus
-apply(resp_full[&quot;Work_Status&quot;], 2, table)</code></pre>
-<pre><code>##            Work_Status
-## full-time         2260
-## part-time          465
-## retired            174
-## student            837
-## unemployed         258</code></pre>
+work_table = as.data.frame(table(resp_full$Work_Status))
+colnames(work_table) = c('Status','Count')
+work_table = work_table[order(work_table$Count,decreasing=TRUE),]
+kable(work_table,row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options=c('striped','condensed'),full_width=FALSE)%&gt;%
+  row_spec(row=1:dim(work_table)[1],bold=T,color='white',background='darkred')</code></pre>
+<table class="table table-striped table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+full-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+2260
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+student
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+837
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+part-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+465
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+unemployed
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+258
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+retired
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+174
+</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code>#Distributions across Gender and Work Status
-with(resp_full, table(Gender, Work_Status))</code></pre>
-<pre><code>##         Work_Status
-## Gender   full-time part-time retired student unemployed
-##   Female      1209       312      86     504        168
-##   Male        1047       152      88     333         89</code></pre>
-<pre class="r"><code>top10Jobs</code></pre>
-<pre><code>##          title count
-## 589    teacher    90
-## 349    manager    84
-## 48   assistant    65
-## 464  professor    56
-## 56    attorney    53
-## 218   engineer    46
-## 122    college    46
-## 179   director    45
-## 131 consultant    44
-## 31     analyst    38</code></pre>
+genderwork_table = as.data.frame(table(resp_full$Gender,resp_full$Work_Status))
+colnames(genderwork_table) = c('Gender','Work_Status','Count')
+genderwork_table = genderwork_table[order(genderwork_table$Count,decreasing=TRUE),]
+kable(genderwork_table,row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%&gt;%
+  row_spec(row=1:dim(genderwork_table)[1],bold=T,color='white',background='darkred')</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Gender
+</th>
+<th style="text-align:left;">
+Work_Status
+</th>
+<th style="text-align:right;">
+Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+full-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+1209
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+full-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+1047
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+student
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+504
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+student
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+333
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+part-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+unemployed
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+168
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+part-time
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+152
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+unemployed
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+89
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Male
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+retired
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+88
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Female
+</td>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+retired
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+86
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>kable(top10Jobs,row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%&gt;%
+  row_spec(row=1:dim(top10Jobs)[1],bold=T,color='white',background='darkred')</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:right;">
+count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+teacher
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+90
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+manager
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+84
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+assistant
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+professor
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+attorney
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+engineer
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+college
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+director
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+consultant
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+analyst
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+38
+</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code># 4D:
 
 # Counts of participants per country in descending order
 
-countryCt &lt;- count(resp_full, resp_full$Country_Res)</code></pre>
-<pre><code>## Warning: package 'bindrcpp' was built under R version 3.3.3</code></pre>
-<pre class="r"><code>colnames(countryCt) &lt;- c(&quot;Country&quot;, &quot;Count&quot;)
-
-sortedCC &lt;- countryCt[order(countryCt$Count, decreasing = TRUE),]
-
-print(sortedCC)</code></pre>
-<pre><code>## # A tibble: 91 x 2
-##           Country Count
-##            &lt;fctr&gt; &lt;int&gt;
-##  1  United States  2785
-##  2         Canada   243
-##  3 United Kingdom   177
-##  4           &lt;NA&gt;   160
-##  5      Australia    99
-##  6          India    78
-##  7          Italy    62
-##  8        Germany    36
-##  9         Brazil    20
-## 10        Ireland    19
-## # ... with 81 more rows</code></pre>
+countryCt = as.data.frame(table(resp_full$Country_Res))
+colnames(countryCt) = c('Country','Count')
+sortedCC = countryCt[order(countryCt$Count, decreasing = TRUE),]
+kable(head(sortedCC,20),row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%&gt;%
+  row_spec(row=1:20,bold=T,color='white',background='darkred')</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:right;">
+Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+United States
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+2785
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Canada
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+United Kingdom
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+177
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Australia
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+99
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+India
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+78
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Italy
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+62
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Germany
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+36
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Brazil
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Ireland
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Isreal
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Netherlands
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Sweden
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Norway
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+France
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Japan
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Spain
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+China
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Finland
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+Mexico
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;">
+New Zealand
+</td>
+<td style="text-align:right;font-weight: bold;color: white;background-color: darkred;">
+12
+</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code># 4E:
 
 # Find the number of people whose self view matched others view
@@ -501,12 +1122,36 @@ print(sortedCC)</code></pre>
 resp_full$Others_Score &lt;- as.character(resp_full$Others_Score)
 resp_full$Self_Score &lt;- as.character(resp_full$Self_Score)
 
-viewMatch &lt;- count(resp_full[which(resp_full$Self_Score == resp_full$Others_Score),])
-print(viewMatch)</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##       n
-##   &lt;int&gt;
-## 1  2846</code></pre>
+match_yes = sum(resp_full$Self_Score == 'yes' &amp; resp_full$Others_Score == 'yes')
+match_no = sum(resp_full$Self_Score == 'no' &amp; resp_full$Others_Score == 'no')
+match_either = as.data.frame(cbind(match_yes,match_no))
+colnames(match_either) = c('Others Agree I Procrastinate','Others Agree I Do Not Procrastinate')
+kable(match_either,row.names=FALSE,format='html')%&gt;%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%&gt;%
+  row_spec(row=1:1,bold=T,color='black',background='beige')%&gt;%
+  column_spec(1:2,width='1cm')</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Others Agree I Procrastinate
+</th>
+<th style="text-align:right;">
+Others Agree I Do Not Procrastinate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; ">
+2358
+</td>
+<td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; ">
+482
+</td>
+</tr>
+</tbody>
+</table>
 <div id="question-5-visualization-and-deeper-analysis" class="section level2">
 <h2>Question 5: Visualization and Deeper Analysis</h2>
 <pre class="r"><code># 5B:

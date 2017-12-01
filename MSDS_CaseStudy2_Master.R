@@ -8,6 +8,7 @@
 #install.packages("curl")
 #install.packages("stargazer")
 #install.packages("stringi")
+#install.packages("scales")
 
 
 #Get libraries
@@ -19,14 +20,16 @@
 #library("ggpubr")
 #library("reshape2")
 #library("stringr")
+#library("scales")
 
 #Include custom function library
-source('CS2_Functions.R')
+source('MSDS6306_Final_Case_Study_Functions.R')
 
 # 2: Read in and clean raw data
 
 # 2A: Read in CSV
-dataset_raw <- read.csv("C:\\SMU_INTRO_TO_DS\\CASESTUDY2\\Data\\Procrastination.csv")
+filepath = 'C:\\Users\\Jose\\Downloads\\Case_Study_2\\CaseStudy2_MSDS'
+dataset_raw <- read.csv(paste(filepath,'Procrastination.csv',sep='\\'))
 
 dim(dataset_raw)
 # There are 4264 rows and 61 columns
@@ -144,29 +147,41 @@ h1 = gghistogram(resp_full,x='Age',y='..count..',
 								 bins=10,
 								 fill='blue',
 								 size=2,
-								 title='Age',
-								 color='white'
+								 title='Histogram of Age',
+								 color='white',
+								 ylab='Count'
 )
 
-h1 + font('x.text',size=8)
+h1 = h1 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
+
 
 h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
-								 bins=10,
 								 fill='blueviolet',
 								 size=2,
-								 title='Ann Inc',
-								 color='white'
+								 bins=25,
+								 title='Histogram of Annual Income',
+								 color='white',
+								 ylab='Count',
+								 xlab='Annual Income'
 )
 
-h2 + font('x.text',size=10)
+Annual_Inc_Clean = resp_full[which(!is.na(resp_full$Annual_Inc)),'Annual_Inc']
+
+h2 = h2 + font('xy.text',size=12) + 
+  theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30) +
+  scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=5,
+								 bins=35,
 								 fill='cadetblue3',
 								 size=2,
-								 title='HDI',
-								 color='white'
+								 title='Histogram of HDI',
+								 color='white',
+								 ylab='Count'
 )
+
+h3 = h3 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
 DPMetric <- resp_full["DP_Avg"]
 DPMetric$Variable <- 'DP_Avg'
@@ -190,16 +205,17 @@ h4 = ggboxplot(metrics,x='Variable',
 							 y='Value',
 							 color='Variable',
 							 palette='jco',
-							 size=1.5
-)
+							 size=1,
+							 xlab='')
 
 
-h4 + font('x.text',size=10)
+h4 = h4 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30)
 
-ggarrange(ggarrange(h1,h2,h3,ncol=3,labels=c('1','2','3')),
-					h4,
+ggarrange(h1,h3,
+					h2,h4,
 					nrow=2,
-					labels='4')
+					ncol=2)
 
 # Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
 # distribution with peaks around the ages of 25, 45 and 55. THe Annual Income is more right-skewed.
@@ -215,12 +231,6 @@ jobs_matrix = unlist(apply(jobs,MARGIN=2,FUN=function(x){strsplit(x,' ')})) %>%
 	gsub(pattern='[[:punct:]]',replacement='') %>%
 	gsub(pattern='^$|^ $',replacement=NA) 
 
-jobs_matrix = unlist(apply(jobs,MARGIN=2,FUN=function(x){strsplit(x,' ')})) %>%
-	gsub(pattern='[[:punct:]]',replacement='') %>%
-	gsub(pattern='^$|^ $',replacement=NA) %>%
-	subset(!is.na(jobs_matrix))
-
-
 jobs_matrix = as.factor(tolower(jobs_matrix))
 
 jobs_count = as.data.frame(table(jobs_matrix))
@@ -233,6 +243,13 @@ keywords = jobs_count[1:10,]
 keywords_del = c('and','of')
 top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 
+#For the codebook only
+#These are the job assignments we subjectively made to get the top10 job counts shown:
+top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
+
+for (i in 1:length(top10Jobs$title)) {
+print(paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
+}
 
 # Frequencies per column 
 # Unique distributions
@@ -269,6 +286,11 @@ resp_full$Self_Score <- as.character(resp_full$Self_Score)
 viewMatch <- count(resp_full[which(resp_full$Self_Score == resp_full$Others_Score),])
 print(viewMatch)
 
+viewMatch <- count(resp_full[which(resp_full$Self_Score == 'no' & resp_full$Others_Score == 'no'),])
+print(viewMatch)
+
+viewMatch <- count(resp_full[which(resp_full$Self_Score == 'yes' & resp_full$Others_Score == 'yes'),])
+print(viewMatch)
 
 # 5: Visualization and Deeper Analysis
 
