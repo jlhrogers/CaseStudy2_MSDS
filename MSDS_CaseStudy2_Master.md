@@ -1,4 +1,4 @@
-# MSDS Case Study 2 - Procrastination and HDI Data
+﻿# MSDS Case Study 2 - Procrastination and HDI Data
 Jose Torres and Lisa Street  
 November 29, 2017  
 
@@ -279,7 +279,7 @@ ggarrange(h1,h3,
 					ncol=2)
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-1.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question4_Preliminary_Analysis_-1.png)<!-- -->
 
 ```r
 # Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
