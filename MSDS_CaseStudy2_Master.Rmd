@@ -64,7 +64,7 @@ library("kableExtra")
 
 ## Load custom functions.
 
-```{r custom functions}
+```{r custom_functions}
 
 #Custom functions for Case Study 2
 #Please open MSDS6306_Final_Case_Study_Functions.R for more details
