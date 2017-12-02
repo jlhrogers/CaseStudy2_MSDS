@@ -155,7 +155,7 @@ resp_answers$SWLS_Avg = round(apply(X=resp_answers[,42:46],MARGIN=1,FUN=mean),5)
 
 ## Question 3: HDI table scrape from Wikipedia
 
-```{r Question3 HDI table scrape from Wikipedia}
+```{r Question3_HDI_table_scrape_from_Wikipedia}
 
 # Scrape the Wikipedia website for the 8 HDI data tables
 
@@ -186,7 +186,7 @@ resp_attrwHDI = resp_attrwHDI[order(resp_attrwHDI$ID),]
 # Question 4: Preliminary Analysis
 
 
-```{r Question4 Preliminary Analysis, warning=FALSE}
+```{r Question4_Preliminary_Analysis, warning=FALSE}
 
 # 4A:
 # Remove respondents under 18 from resp_attr and resp_answers
@@ -237,7 +237,7 @@ h2 = h2 + font('xy.text',size=12) +
   scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=35,
+								 bins=10,
 								 fill='cadetblue3',
 								 size=2,
 								 title='Histogram of HDI',
@@ -316,10 +316,11 @@ top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 #For the codebook only
 #These are the job assignments we subjectively made to get the top10 job counts shown:
 top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
-
+joblist_replace = character()
 for (i in 1:length(top10Jobs$title)) {
-print(paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
+joblist_replace = c(joblist_replace,paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
 }
+write.csv(joblist_replace,'Job_Keyword_Mapping.csv')
 
 
 # Frequencies per column 
@@ -359,10 +360,15 @@ kable(top10Jobs,row.names=FALSE,format='html')%>%
 countryCt = as.data.frame(table(resp_full$Country_Res))
 colnames(countryCt) = c('Country','Count')
 sortedCC = countryCt[order(countryCt$Count, decreasing = TRUE),]
-kable(head(sortedCC,20),row.names=FALSE,format='html')%>%
+kable(head(sortedCC,19),row.names=FALSE,format='html')%>%
   kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
-  row_spec(row=1:20,bold=T,color='white',background='darkred')
+  row_spec(row=1:19,bold=T,color='white',background='darkred')
+
+write.csv(sortedCC[21:length(sortedCC$Country),],'Remaining_Countries.csv')
+
+
 # 4E:
+
 
 # Find the number of people whose self view matched others view
 
@@ -385,7 +391,7 @@ kable(match_either,row.names=FALSE,format='html')%>%
 
 ## Question 5: Visualization and Deeper Analysis
 
-```{r Question5 Preliminary Analysis}
+```{r Question5_Preliminary_Analysis}
 
 # 5B:
 
@@ -405,7 +411,7 @@ Top15DP <- SortedDP[1:15,]
 ggplot(Top15DP, aes(reorder(Country_Res, -DP_Avg), DP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
 	ggtitle("Countries with the top 15 DPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
 	ylab("DP Mean Value")
 
@@ -428,9 +434,10 @@ Top15AIP <- SortedAIP[1:15,]
 ggplot(Top15AIP, aes(reorder(Country_Res, -AIP_Avg), AIP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
 	ggtitle("Countries with the top 15 AIPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
-	ylab("AIP Mean Value")
+	ylab("AIP Mean Value")+
+  scale_x_discrete(labels=c("Dominican Republic"="Dom. Republic"))
 
 #Find countries that exist in both the top 15 AIP and DP Means
 merge(Top15DP, Top15AIP, by.x=c("Country_Res"), by.y=c("Country_Res"))
@@ -448,14 +455,29 @@ mDFMF <- subset(resp_full[c("Country_Res","Age","Annual_Inc","Gender")], Gender 
 mDFMFAvg <- aggregate(Annual_Inc~Age + Gender, mDFMF, mean)
 
 
-par(mar=c(4,6,2,2))
-plot(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = ifelse(mDFMFAvg$Gender == "Female", "hot pink", "blue"), xlab="", ylab="")
-axis(1,at=pretty(mDFMFAvg$Age),labels=pretty(mDFMFAvg$Age),las=1)
-axis(2,at=pretty(mDFMFAvg$Annual_Inc),labels=format(pretty(mDFMFAvg$Annual_Inc),big.mark=",", scientific=FALSE),las=1)
-mtext(text="Age", side=1, line=2)
-mtext(text="Annual Income", side=2, line=5)
-title("Mean Income by Age and Gender")
-abline(lm(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age), col = "green")
+#par(mar=c(4,6,2,2))
+# par(xpd = T, mar = par()$mar + c(0,0,0,7))
+# plot(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = ifelse(mDFMFAvg$Gender == "Female", "hot pink", "blue"), xlab="", ylab="")
+# axis(1,at=pretty(mDFMFAvg$Age),labels=pretty(mDFMFAvg$Age),las=1)
+# axis(2,at=pretty(mDFMFAvg$Annual_Inc),labels=format(pretty(mDFMFAvg$Annual_Inc),big.mark=",", scientific=FALSE),las=1)
+# mtext(text="Age", side=1, line=2)
+# mtext(text="Annual Income", side=2, line=5)
+# title("Mean Income by Age and Gender")
+# abline(lm(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age), col = "green")
+# legend("topright",title="Gender",c("Male","Female"),fill=terrain.colors(3),horiz=TRUE)
+# par(mar=c(5, 4, 4, 2) + 0.1)
+
+h5 = ggscatter(mDFMFAvg,y='Annual_Inc',x='Age',
+								 color='Gender',
+								 size=2,
+								 title='Average Annual Income vs Average Age',
+								 ylab='Average Annual Income',
+								 xlab='Average Age')
+
+h5 = h5 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  scale_y_continuous(label=dollar_format(),breaks = round(seq(0, max(mDFMFAvg$Annual_Inc), by = 25000),1))
+
+h5
 
 # There does seem to be a relationship between age and annual income, with annual income increasing with age.  However,
 # there also seems to be a large disparity between males and females and their annual income starting at around age 40 and 
@@ -473,22 +495,24 @@ par(mar=c(4,6,2,2))
 plot(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = "blue", xlab="", ylab="")
 axis(1,at=pretty(mDFHDIAvg$HDI),labels=pretty(mDFHDIAvg$HDI),las=1)
 axis(2,at=pretty(mDFHDIAvg$SWLS_Avg),labels=format(pretty(mDFHDIAvg$SWLS_Avg),big.mark=",", scientific=FALSE),las=1)
-mtext(text="HDI", side=1, line=2)
+mtext(text="Mean HDI", side=1, line=2)
 mtext(text="Mean Life Satisfaction", side=2, line=5)
-title("Life Satisfaction Mean by HDI")
+title("Life Satisfaction Mean by Mean HDI")
 abline(lm(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI), col = "green")
 
 
 # Barchart between HDI Category and Mean Life Satisfaction
 
-ggplot(mDFHDIAvg, aes(fill=HDI_Cat, y=SWLS_Avg, x=HDI_Cat)) + 
+mDFHDIAvg$HDI_Cat_Relevel = factor(mDFHDIAvg$HDI_Cat,levels=c('Very High','High','Medium','Low'))
+
+ggplot(mDFHDIAvg, aes(fill=HDI_Cat_Relevel, y=SWLS_Avg, x=HDI_Cat_Relevel)) + 
 	scale_x_discrete(labels=c("High Human Development" = "HHD", "Very High Human Development" = "VHHD",
 														"Medium Human Development" = "MHD", "Low Human Development" = "LHD")) +
-	geom_bar(position="dodge", stat="identity") +
+	geom_bar(position="dodge", stat="identity", width=.5) +
 	ggtitle("Mean Life Satisfaction per HDI Category Test") +
 	theme(plot.title = element_text(hjust = 0.5)) +
 	xlab("Human Development Category") +
-	ylab("Life Satisfaction Mean")
+	ylab("Mean Life Satisfaction")
 
 ```
 

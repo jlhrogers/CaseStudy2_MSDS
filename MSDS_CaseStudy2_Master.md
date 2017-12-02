@@ -1,4 +1,4 @@
-﻿# MSDS Case Study 2 - Procrastination and HDI Data
+# MSDS Case Study 2 - Procrastination and HDI Data
 Jose Torres and Lisa Street  
 November 29, 2017  
 
@@ -234,7 +234,7 @@ h2 = h2 + font('xy.text',size=12) +
   scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=35,
+								 bins=10,
 								 fill='cadetblue3',
 								 size=2,
 								 title='Histogram of HDI',
@@ -279,7 +279,7 @@ ggarrange(h1,h3,
 					ncol=2)
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4_Preliminary_Analysis_-1.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question4_Preliminary_Analysis-1.png)<!-- -->
 
 ```r
 # Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
@@ -317,213 +317,13 @@ top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 #For the codebook only
 #These are the job assignments we subjectively made to get the top10 job counts shown:
 top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
-
+joblist_replace = character()
 for (i in 1:length(top10Jobs$title)) {
-print(paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
+joblist_replace = c(joblist_replace,paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
 }
-```
+write.csv(joblist_replace,'Job_Keyword_Mapping.csv')
 
-```
-##  [1] "teacher <-  teacher"                              
-##  [2] "teacher <- efl teacher/ professional researcher"  
-##  [3] "teacher <- dance teacher"                         
-##  [4] "teacher <- esl teacher/biologist"                 
-##  [5] "teacher <- freelance esl teacher"                 
-##  [6] "teacher <- special education teacher"             
-##  [7] "teacher <- yoga teacher"                          
-##  [8] "teacher <- teacher assistant"                     
-##  [9] "teacher <- musician/student/teacher"              
-## [10] "teacher <- teacher and full time doctoral student"
-## [11] "teacher <- teacher's assistant/afterschool leader"
-## [12] "teacher <- asst. pre-school teacher"              
-## [13] "teacher <- student/teacher"                       
-## [14] "teacher <- theater artist/ teacher"               
-## [15] "teacher <- early child hood teacher"              
-## [16] "teacher <- teacher / administrator"               
-##  [1] "manager <- sales manager"                           
-##  [2] "manager <- manager"                                 
-##  [3] "manager <- system manager"                          
-##  [4] "manager <- quality manager"                         
-##  [5] "manager <- project manager"                         
-##  [6] "manager <- deputy practice manager"                 
-##  [7] "manager <- office manager / accountant"             
-##  [8] "manager <- it manager"                              
-##  [9] "manager <- divisional manager of a large cosmetics" 
-## [10] "manager <- regional sales manager"                  
-## [11] "manager <- freelance project manager"               
-## [12] "manager <- manager - analytical and environmental s"
-## [13] "manager <- program manager and acting director"     
-## [14] "manager <- operations manager"                      
-## [15] "manager <- case manager"                            
-## [16] "manager <- restaurant operations manager"           
-## [17] "manager <- legal assistant / office manager"        
-## [18] "manager <- human resource manager"                  
-## [19] "manager <- theater general manager"                 
-## [20] "manager <- office services manager"                 
-## [21] "manager <- manager it"                              
-## [22] "manager <- accounting manager"                      
-## [23] "manager <- office manager"                          
-## [24] "manager <- consulting manager"                      
-## [25] "manager <- ehs manager"                             
-## [26] "manager <- program manager"                         
-## [27] "manager <- senior project manager"                  
-## [28] "manager <- manager,interacitve media"               
-## [29] "manager <- financial risk manager"                  
-## [30] "manager <- please specify title manager for regulat"
-## [31] "manager <- account manager"                         
-## [32] "manager <- media relations manager"                 
-## [33] "manager <- research manager"                        
-## [34] "manager <- accounts payable / fleet manager"        
-## [35] "manager <- business manager"                        
-## [36] "manager <- product field test manager"              
-## [37] "manager <- farm manager"                            
-##  [1] "assistant <-  teaching assistant/graduate student"    
-##  [2] "assistant <- assistant professor"                     
-##  [3] "assistant <- administration assistant"                
-##  [4] "assistant <- research assistant"                      
-##  [5] "assistant <- instructional assistant online"          
-##  [6] "assistant <- lab services assistant"                  
-##  [7] "assistant <-  assistant"                              
-##  [8] "assistant <- legal assistant / office manager"        
-##  [9] "assistant <- client relationship assistant"           
-## [10] "assistant <- accounting assistant"                    
-## [11] "assistant <- graduate research assistant"             
-## [12] "assistant <- legal assistant"                         
-## [13] "assistant <- teacher assistant"                       
-## [14] "assistant <- executive assistant"                     
-## [15] "assistant <- it assistant"                            
-## [16] "assistant <- graduate assistant"                      
-## [17] "assistant <-  research/teaching assistant"            
-## [18] "assistant <- fitness assistant / wellness mentor / ca"
-## [19] "assistant <- assistant general counsel"               
-## [20] "assistant <- teacher's assistant/afterschool leader"  
-## [21] "assistant <- insurance broker's assistant"            
-## [22] "assistant <- certified nurse's assistant"             
-## [23] "assistant <- investment assistant"                    
-## [24] "assistant <- academic assistant"                      
-## [25] "assistant <- program assistant"                       
-## [26] "assistant <- clinical research assistant"             
-## [27] "assistant <- library assistant"                       
-## [28] "assistant <- fulltime office assistant"               
-## [29] "assistant <- reasearch assistant"                     
-## [30] "assistant <- assistant district attorney"             
-## [31] "assistant <- speech and language assistant"           
-## [32] "assistant <- clinical trial assistant"                
-## [33] "assistant <- student and administrative assistant"    
-## [34] "assistant <- academic/career coach & admin assistant" 
-## [1] "professor <- college professor"   "professor <- assistant professor"
-## [1] "attorney <- attorney"                                  
-## [2] "attorney <- attorney â<U+0080><U+0093> associate"                    
-## [3] "attorney <- attorney - self employed for 2 years â<U+0080><U+0093> f"
-## [4] "attorney <-  attorney-self employed"                   
-## [5] "attorney <- editor attorney"                           
-## [6] "attorney <- assistant district attorney"               
-##  [1] "engineer <- audio engineer"              
-##  [2] "engineer <- chiefe development engineer" 
-##  [3] "engineer <- engineer"                    
-##  [4] "engineer <- network engineer"            
-##  [5] "engineer <- it support engineer"         
-##  [6] "engineer <- software engineer"           
-##  [7] "engineer <- network services engineer"   
-##  [8] "engineer <- data warehouse engineer"     
-##  [9] "engineer <- it engineer"                 
-## [10] "engineer <- mechanical engineer"         
-## [11] "engineer <- process engineer"            
-## [12] "engineer <- environmental engineer"      
-## [13] "engineer <- plant engineering supervisor"
-## [1] "college <- college professor"                      
-## [2] "college <- college faculty"                        
-## [3] "college <- p-t college faculty & p-t self-employed"
-## [4] "college <- college administrator"                  
-##  [1] "director <- technical director"                      
-##  [2] "director <- director of a language program"          
-##  [3] "director <- ict director"                            
-##  [4] "director <- director"                                
-##  [5] "director <- company director"                        
-##  [6] "director <- director operations"                     
-##  [7] "director <- director of software company"            
-##  [8] "director <- director,social dvelopment"              
-##  [9] "director <- program manager and acting director"     
-## [10] "director <- deputy director"                         
-## [11] "director <- volunteer director"                      
-## [12] "director <- executive director"                      
-## [13] "director <- program director"                        
-## [14] "director <- it director"                             
-## [15] "director <- food department director"                
-## [16] "director <- proposal director"                       
-## [17] "director <- associate director"                      
-## [18] "director <- director of non-profit organization"     
-## [19] "director <- television director"                     
-## [20] "director <- casting director"                        
-## [21] "director <- director / information technology"       
-## [22] "director <- art director"                            
-## [23] "director <- creative director"                       
-## [24] "director <- program director at a non-profit organiz"
-## [25] "director <- director of contract management"         
-## [26] "director <- dept. director (non-profit)"             
-## [27] "director <- writer & director of content solutions"  
-## [28] "director <- pjublic relations director"              
-## [29] "director <- associate director/ marketing communicat"
-## [30] "director <- director of business development"        
-## [31] "director <- director of academic affairs"            
-## [32] "director <- lab director/archeologist"               
-##  [1] "consultant <- gender/public health consultant"         
-##  [2] "consultant <- media consultant"                        
-##  [3] "consultant <-  consultant"                             
-##  [4] "consultant <- computer consultant"                     
-##  [5] "consultant <- creative consultant"                     
-##  [6] "consultant <- it security consultant"                  
-##  [7] "consultant <- it consultant"                           
-##  [8] "consultant <- internet & media consultant"             
-##  [9] "consultant <- information technology consultant"       
-## [10] "consultant <- management consultant & entrepreneur"    
-## [11] "consultant <- speaker author consultant"               
-## [12] "consultant <- senior human resources consultant"       
-## [13] "consultant <- tax consultant"                          
-## [14] "consultant <- consultant and entrepreneur (small busin"
-## [15] "consultant <- writer and management consultant"        
-## [16] "consultant <- senior consultant programmer/analyst"    
-## [17] "consultant <- social media consultant"                 
-## [18] "consultant <- healthcare consultant"                   
-## [19] "consultant <- writing consultant"                      
-## [20] "consultant <- financial consultant"                    
-## [21] "consultant <- writer / lecturer / consultant"          
-## [22] "consultant <- business consultant"                     
-## [23] "consultant <- senior consultant"                       
-## [24] "consultant <- entrepreneur & consultant"               
-## [25] "consultant <- non-profit consultant"                   
-## [26] "consultant <- management consultant"                   
-##  [1] "analyst <- financial analyst"                    
-##  [2] "analyst <- social policy analyst"                
-##  [3] "analyst <- assoc. governmental program analyst"  
-##  [4] "analyst <- system analyst"                       
-##  [5] "analyst <- programmer/software analyst"          
-##  [6] "analyst <- analyst"                              
-##  [7] "analyst <- business / test analyst"              
-##  [8] "analyst <- market analyst"                       
-##  [9] "analyst <- systems analyst"                      
-## [10] "analyst <- policy analyst"                       
-## [11] "analyst <- systems programmer/analyst"           
-## [12] "analyst <- senior systems analyst"               
-## [13] "analyst <- research analyst"                     
-## [14] "analyst <- market research analyst"              
-## [15] "analyst <- tech analyst/gis"                     
-## [16] "analyst <- senior consultant programmer/analyst" 
-## [17] "analyst <- legislation analyst"                  
-## [18] "analyst <- senior records analyst"               
-## [19] "analyst <- environmental analyst"                
-## [20] "analyst <- research / gis analyst"               
-## [21] "analyst <- it analyst"                           
-## [22] "analyst <- programmer analyst"                   
-## [23] "analyst <- budget analyst"                       
-## [24] "analyst <- acounting analyst"                    
-## [25] "analyst <- computer systems analyst"             
-## [26] "analyst <- production operations support analyst"
-## [27] "analyst <- business systems analyst"             
-## [28] "analyst <- software analyst"
-```
 
-```r
 # Frequencies per column 
 # Unique distributions
 
@@ -724,9 +524,9 @@ kable(top10Jobs,row.names=FALSE,format='html')%>%
 countryCt = as.data.frame(table(resp_full$Country_Res))
 colnames(countryCt) = c('Country','Count')
 sortedCC = countryCt[order(countryCt$Count, decreasing = TRUE),]
-kable(head(sortedCC,20),row.names=FALSE,format='html')%>%
+kable(head(sortedCC,19),row.names=FALSE,format='html')%>%
   kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
-  row_spec(row=1:20,bold=T,color='white',background='darkred')
+  row_spec(row=1:19,bold=T,color='white',background='darkred')
 ```
 
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -811,15 +611,15 @@ kable(head(sortedCC,20),row.names=FALSE,format='html')%>%
 <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Mexico </td>
    <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
   </tr>
-<tr>
-<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> New Zealand </td>
-   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
-  </tr>
 </tbody>
 </table>
 
 ```r
+write.csv(sortedCC[21:length(sortedCC$Country),],'Remaining_Countries.csv')
+
+
 # 4E:
+
 
 # Find the number of people whose self view matched others view
 
@@ -870,12 +670,12 @@ Top15DP <- SortedDP[1:15,]
 ggplot(Top15DP, aes(reorder(Country_Res, -DP_Avg), DP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
 	ggtitle("Countries with the top 15 DPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
 	ylab("DP Mean Value")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-1.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-1.png)<!-- -->
 
 ```r
 ####START HERE:
@@ -897,12 +697,13 @@ Top15AIP <- SortedAIP[1:15,]
 ggplot(Top15AIP, aes(reorder(Country_Res, -AIP_Avg), AIP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
 	ggtitle("Countries with the top 15 AIPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
-	ylab("AIP Mean Value")
+	ylab("AIP Mean Value")+
+  scale_x_discrete(labels=c("Dominican Republic"="Dom. Republic"))
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-2.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-2.png)<!-- -->
 
 ```r
 #Find countries that exist in both the top 15 AIP and DP Means
@@ -933,17 +734,32 @@ mDFMF <- subset(resp_full[c("Country_Res","Age","Annual_Inc","Gender")], Gender 
 mDFMFAvg <- aggregate(Annual_Inc~Age + Gender, mDFMF, mean)
 
 
-par(mar=c(4,6,2,2))
-plot(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = ifelse(mDFMFAvg$Gender == "Female", "hot pink", "blue"), xlab="", ylab="")
-axis(1,at=pretty(mDFMFAvg$Age),labels=pretty(mDFMFAvg$Age),las=1)
-axis(2,at=pretty(mDFMFAvg$Annual_Inc),labels=format(pretty(mDFMFAvg$Annual_Inc),big.mark=",", scientific=FALSE),las=1)
-mtext(text="Age", side=1, line=2)
-mtext(text="Annual Income", side=2, line=5)
-title("Mean Income by Age and Gender")
-abline(lm(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age), col = "green")
+#par(mar=c(4,6,2,2))
+# par(xpd = T, mar = par()$mar + c(0,0,0,7))
+# plot(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = ifelse(mDFMFAvg$Gender == "Female", "hot pink", "blue"), xlab="", ylab="")
+# axis(1,at=pretty(mDFMFAvg$Age),labels=pretty(mDFMFAvg$Age),las=1)
+# axis(2,at=pretty(mDFMFAvg$Annual_Inc),labels=format(pretty(mDFMFAvg$Annual_Inc),big.mark=",", scientific=FALSE),las=1)
+# mtext(text="Age", side=1, line=2)
+# mtext(text="Annual Income", side=2, line=5)
+# title("Mean Income by Age and Gender")
+# abline(lm(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age), col = "green")
+# legend("topright",title="Gender",c("Male","Female"),fill=terrain.colors(3),horiz=TRUE)
+# par(mar=c(5, 4, 4, 2) + 0.1)
+
+h5 = ggscatter(mDFMFAvg,y='Annual_Inc',x='Age',
+								 color='Gender',
+								 size=2,
+								 title='Average Annual Income vs Average Age',
+								 ylab='Average Annual Income',
+								 xlab='Average Age')
+
+h5 = h5 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  scale_y_continuous(label=dollar_format(),breaks = round(seq(0, max(mDFMFAvg$Annual_Inc), by = 25000),1))
+
+h5
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-3.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-3.png)<!-- -->
 
 ```r
 # There does seem to be a relationship between age and annual income, with annual income increasing with age.  However,
@@ -962,26 +778,28 @@ par(mar=c(4,6,2,2))
 plot(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = "blue", xlab="", ylab="")
 axis(1,at=pretty(mDFHDIAvg$HDI),labels=pretty(mDFHDIAvg$HDI),las=1)
 axis(2,at=pretty(mDFHDIAvg$SWLS_Avg),labels=format(pretty(mDFHDIAvg$SWLS_Avg),big.mark=",", scientific=FALSE),las=1)
-mtext(text="HDI", side=1, line=2)
+mtext(text="Mean HDI", side=1, line=2)
 mtext(text="Mean Life Satisfaction", side=2, line=5)
-title("Life Satisfaction Mean by HDI")
+title("Life Satisfaction Mean by Mean HDI")
 abline(lm(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI), col = "green")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-4.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-4.png)<!-- -->
 
 ```r
 # Barchart between HDI Category and Mean Life Satisfaction
 
-ggplot(mDFHDIAvg, aes(fill=HDI_Cat, y=SWLS_Avg, x=HDI_Cat)) + 
+mDFHDIAvg$HDI_Cat_Relevel = factor(mDFHDIAvg$HDI_Cat,levels=c('Very High','High','Medium','Low'))
+
+ggplot(mDFHDIAvg, aes(fill=HDI_Cat_Relevel, y=SWLS_Avg, x=HDI_Cat_Relevel)) + 
 	scale_x_discrete(labels=c("High Human Development" = "HHD", "Very High Human Development" = "VHHD",
 														"Medium Human Development" = "MHD", "Low Human Development" = "LHD")) +
-	geom_bar(position="dodge", stat="identity") +
+	geom_bar(position="dodge", stat="identity", width=.5) +
 	ggtitle("Mean Life Satisfaction per HDI Category Test") +
 	theme(plot.title = element_text(hjust = 0.5)) +
 	xlab("Human Development Category") +
-	ylab("Life Satisfaction Mean")
+	ylab("Mean Life Satisfaction")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-5.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-5.png)<!-- -->
 
