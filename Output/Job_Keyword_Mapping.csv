@@ -1,0 +1,199 @@
+RowNum,Job Keyword
+1,teacher <-  teacher
+2,teacher <- efl teacher/ professional researcher
+3,teacher <- dance teacher
+4,teacher <- esl teacher/biologist
+5,teacher <- freelance esl teacher
+6,teacher <- special education teacher
+7,teacher <- yoga teacher
+8,teacher <- teacher assistant
+9,teacher <- musician/student/teacher
+10,teacher <- teacher and full time doctoral student
+11,teacher <- teacher's assistant/afterschool leader
+12,teacher <- asst. pre-school teacher
+13,teacher <- student/teacher
+14,teacher <- theater artist/ teacher
+15,teacher <- early child hood teacher
+16,teacher <- teacher / administrator
+17,manager <- sales manager
+18,manager <- manager
+19,manager <- system manager
+20,manager <- quality manager
+21,manager <- project manager
+22,manager <- deputy practice manager
+23,manager <- office manager / accountant
+24,manager <- it manager
+25,manager <- divisional manager of a large cosmetics
+26,manager <- regional sales manager
+27,manager <- freelance project manager
+28,manager <- manager - analytical and environmental s
+29,manager <- program manager and acting director
+30,manager <- operations manager
+31,manager <- case manager
+32,manager <- restaurant operations manager
+33,manager <- legal assistant / office manager
+34,manager <- human resource manager
+35,manager <- theater general manager
+36,manager <- office services manager
+37,manager <- manager it
+38,manager <- accounting manager
+39,manager <- office manager
+40,manager <- consulting manager
+41,manager <- ehs manager
+42,manager <- program manager
+43,manager <- senior project manager
+44,"manager <- manager,interacitve media"
+45,manager <- financial risk manager
+46,manager <- please specify title manager for regulat
+47,manager <- account manager
+48,manager <- media relations manager
+49,manager <- research manager
+50,manager <- accounts payable / fleet manager
+51,manager <- business manager
+52,manager <- product field test manager
+53,manager <- farm manager
+54,assistant <-  teaching assistant/graduate student
+55,assistant <- assistant professor
+56,assistant <- administration assistant
+57,assistant <- research assistant
+58,assistant <- instructional assistant online
+59,assistant <- lab services assistant
+60,assistant <-  assistant
+61,assistant <- legal assistant / office manager
+62,assistant <- client relationship assistant
+63,assistant <- accounting assistant
+64,assistant <- graduate research assistant
+65,assistant <- legal assistant
+66,assistant <- teacher assistant
+67,assistant <- executive assistant
+68,assistant <- it assistant
+69,assistant <- graduate assistant
+70,assistant <-  research/teaching assistant
+71,assistant <- fitness assistant / wellness mentor / ca
+72,assistant <- assistant general counsel
+73,assistant <- teacher's assistant/afterschool leader
+74,assistant <- insurance broker's assistant
+75,assistant <- certified nurse's assistant
+76,assistant <- investment assistant
+77,assistant <- academic assistant
+78,assistant <- program assistant
+79,assistant <- clinical research assistant
+80,assistant <- library assistant
+81,assistant <- fulltime office assistant
+82,assistant <- reasearch assistant
+83,assistant <- assistant district attorney
+84,assistant <- speech and language assistant
+85,assistant <- clinical trial assistant
+86,assistant <- student and administrative assistant
+87,assistant <- academic/career coach & admin assistant
+88,professor <- college professor
+89,professor <- assistant professor
+90,attorney <- attorney
+91,attorney <- attorney – associate
+92,attorney <- attorney - self employed for 2 years – f
+93,attorney <-  attorney-self employed
+94,attorney <- editor attorney
+95,attorney <- assistant district attorney
+96,engineer <- audio engineer
+97,engineer <- chiefe development engineer
+98,engineer <- engineer
+99,engineer <- network engineer
+100,engineer <- it support engineer
+101,engineer <- software engineer
+102,engineer <- network services engineer
+103,engineer <- data warehouse engineer
+104,engineer <- it engineer
+105,engineer <- mechanical engineer
+106,engineer <- process engineer
+107,engineer <- environmental engineer
+108,engineer <- plant engineering supervisor
+109,college <- college professor
+110,college <- college faculty
+111,college <- p-t college faculty & p-t self-employed
+112,college <- college administrator
+113,director <- technical director
+114,director <- director of a language program
+115,director <- ict director
+116,director <- director
+117,director <- company director
+118,director <- director operations
+119,director <- director of software company
+120,"director <- director,social dvelopment"
+121,director <- program manager and acting director
+122,director <- deputy director
+123,director <- volunteer director
+124,director <- executive director
+125,director <- program director
+126,director <- it director
+127,director <- food department director
+128,director <- proposal director
+129,director <- associate director
+130,director <- director of non-profit organization
+131,director <- television director
+132,director <- casting director
+133,director <- director / information technology
+134,director <- art director
+135,director <- creative director
+136,director <- program director at a non-profit organiz
+137,director <- director of contract management
+138,director <- dept. director (non-profit)
+139,director <- writer & director of content solutions
+140,director <- pjublic relations director
+141,director <- associate director/ marketing communicat
+142,director <- director of business development
+143,director <- director of academic affairs
+144,director <- lab director/archeologist
+145,consultant <- gender/public health consultant
+146,consultant <- media consultant
+147,consultant <-  consultant
+148,consultant <- computer consultant
+149,consultant <- creative consultant
+150,consultant <- it security consultant
+151,consultant <- it consultant
+152,consultant <- internet & media consultant
+153,consultant <- information technology consultant
+154,consultant <- management consultant & entrepreneur
+155,consultant <- speaker author consultant
+156,consultant <- senior human resources consultant
+157,consultant <- tax consultant
+158,consultant <- consultant and entrepreneur (small busin
+159,consultant <- writer and management consultant
+160,consultant <- senior consultant programmer/analyst
+161,consultant <- social media consultant
+162,consultant <- healthcare consultant
+163,consultant <- writing consultant
+164,consultant <- financial consultant
+165,consultant <- writer / lecturer / consultant
+166,consultant <- business consultant
+167,consultant <- senior consultant
+168,consultant <- entrepreneur & consultant
+169,consultant <- non-profit consultant
+170,consultant <- management consultant
+171,analyst <- financial analyst
+172,analyst <- social policy analyst
+173,analyst <- assoc. governmental program analyst
+174,analyst <- system analyst
+175,analyst <- programmer/software analyst
+176,analyst <- analyst
+177,analyst <- business / test analyst
+178,analyst <- market analyst
+179,analyst <- systems analyst
+180,analyst <- policy analyst
+181,analyst <- systems programmer/analyst
+182,analyst <- senior systems analyst
+183,analyst <- research analyst
+184,analyst <- market research analyst
+185,analyst <- tech analyst/gis
+186,analyst <- senior consultant programmer/analyst
+187,analyst <- legislation analyst
+188,analyst <- senior records analyst
+189,analyst <- environmental analyst
+190,analyst <- research / gis analyst
+191,analyst <- it analyst
+192,analyst <- programmer analyst
+193,analyst <- budget analyst
+194,analyst <- acounting analyst
+195,analyst <- computer systems analyst
+196,analyst <- production operations support analyst
+197,analyst <- business systems analyst
+198,analyst <- software analyst
