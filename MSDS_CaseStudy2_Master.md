@@ -1,12 +1,24 @@
-# MSDS Case Study 2 - Procrastination and HDI Data
+# Procrastination Tendencies of Company Corp. Customers
 Jose Torres and Lisa Street  
 November 29, 2017  
 
+<br>
+
+## Introduction
+
+<br>
+
+Procrastination is broadly defined as the avoidance of performing a task that needs to be accomplished.  The tasks in question can be of any magnitude and vary greatly in scope and impact.  A person's self view of their own procrastination tendencies can be difficult to measure or define. However, over the years several procrastination scales have been developed to help shed light on the subject. The impact of procrastination can be great, but the sooner a person can understand their own proclivity towards task avoidance, the better the chance they have to work on these challanges. 
+
+In order to gain better insight of the personal and work habits of it's customers, Company Corp. has asked the data scientists from Cool DS Inc to perform an analysis of the subject within it's own companies customer population. Since the customer count of Company Corp. is over 1 million, a random sample from the customer population of each country where Company Corp. retains a physical office, was taken. Each randomly assigned customer was given a survey that included questions regarding personal qualities such as age, income, marital status, etc., as well as a set of questions to be answered from four different procrastination scales. In addition, Cool DS Inc. aligned these results with the estimated Human Development Index factor for each country represented in the survey, to get a better idea of the correlation between a counties HDI and an individuals tendency to procrastinate. The following analysis details the findings from Cool DS Inc's study of procrastination within Company Corp.'s population.
+  
+
+<br>
 
 
-## Installing Necessary Libraries
 
-Install necessary packages if not installed:
+
+#### Install necessary packages if not installed:
 
 
 
@@ -29,86 +41,42 @@ if (!is.element("stargazer", installed.packages()[,1]))
   install.packages("stargazer",repos="http://cran.rstudio.com")
 if (!is.element("stringi", installed.packages()[,1]))
   install.packages("stringi",repos="http://cran.rstudio.com")
+if (!is.element("scales", installed.packages()[,1]))
+  install.packages("scales",repos="http://cran.rstudio.com")
+if (!is.element("kableExtra", installed.packages()[,1]))
+  install.packages("kableExtra",repos="http://cran.rstudio.com")
+if (!is.element("knitr", installed.packages()[,1]))
+  install.packages("knitr",repos="http://cran.rstudio.com")
 ```
 
 
 
 
-## Load custom functions.
+#### Load custom functions created by Cool DS Inc.  
 
 
 ```r
 #Custom functions for Case Study 2
+#Please open MSDS6306_Final_Case_Study_Functions.R for more details
 #Last modified 11/26/17
 
-#Wrapper function for gsub that maintains object classes
-gsubkeep = function(pattern='',replacement=NA,x, ignore.case=FALSE, perl=FALSE,
-										fixed=FALSE, useBytes=FALSE) {
-	if (is.null(dim(x)) && !is.null(class(x))) {
-		colObj = x
-		colClass = class(colObj)
-		colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-									ignore.case=ignore.case,perl=perl,fixed=fixed,
-									useBytes=useBytes)
-		if (colClass == 'factor') {
-			colObj = as.factor(colObj)
-		} else { 
-			colObj = as(colObj,colClass) 
-		}
-		x = colObj
-	} else {
-		for (i in 1:length(x)) {
-			colObj = x[,i]
-			colClass = class(colObj)
-			colObj = gsub(pattern=pattern,replacement=replacement,x=colObj,
-										ignore.case=ignore.case,perl=perl,fixed=fixed,
-										useBytes=useBytes)
-			if (colClass == 'factor') {
-				colObj = as.factor(colObj)
-			} else { 
-				colObj = as(colObj,colClass) 
-			}
-			x[,i] = colObj
-		}
-	}
-	return(x)
-}
-
-#Function that row-stacks the identified columns of a list of data frames
-#Parameters: {x: list of data frames, elements: the particular data frames within x to stack, 
-#             cols: the particular columns to stack, colname: names of the columns selected with cols parameter }
-list_rowbind = function(x,elements=1:length(x),cols = columns(1:length(x[[1]])),
-												colname = colnames(x[[1]])[cols]) {
-	result = data.frame()
-	for (i in elements) {
-		append_df = x[[i]][,cols]
-		colnames(append_df) = colname
-		result = bind_rows(result,append_df)
-	}
-	return(result)
-}
-
-#Function that creates a list of indices and corresponding strings which match keywords
-#Paratermers: {x: a vector (to be coerced to character) to search, findtext: a vector of keywords to look for}
-match_list = function(x,findtext='') {
-	findtext = as.character(findtext)
-	x = tolower(as.character(x))
-	result = list(length(findtext))
-	for (i in 1:length(findtext)) {
-		result[i] = list(cbind('Idx'=grep(findtext[i],x),'Match'=x[grep(findtext[i],x)]))
-	}
-	return(result)
-}
+source('MSDS6306_Final_Case_Study_Functions.R')
 ```
+<br>
 
-## Question 2: Read in and clean raw data
+#### Gather Data for Analysis
+
+The first task performed by Cool DS Inc. was to survey 4,264 customers within Company Corp's universal customer population. The customers surveyed were taken by random sample and each customer was asked to fill out a questionaire of 61 variables.  Some of the variables were limited in answer by drop-down, and some allowed the customer to 'write-in' their own response.  Results of each individuals survey were tallied and consolidated into one master spreadhseet. Because write-in was allowed on some questions, data clean-up on the final consolidated survey was required.  The average procrastination score across the four procrastination scales was calculated as well. The information below details how the data transformation and cleanup was performed.
+
+<br>
 
 
 ```r
 # 2: Read in and clean raw data
 
 # 2A: Read in CSV
-dataset_raw <- read.csv("C:\\SMU_INTRO_TO_DS\\CASESTUDY2\\Data\\Procrastination.csv")
+filepath = 'C:\\SMU_INTRO_TO_DS\\CASESTUDY2\\CS2\\JoseLisa\\FINAL\\Data'
+dataset_raw <- read.csv(paste(filepath,'Procrastination.csv',sep='\\'))
 
 dim(dataset_raw)
 ```
@@ -184,8 +152,14 @@ resp_answers$GP_Avg = round(apply(X=resp_answers[,22:41],MARGIN=1,FUN=mean),5)
 resp_answers$SWLS_Avg = round(apply(X=resp_answers[,42:46],MARGIN=1,FUN=mean),5)
 ```
 
+<br>
 
-## Question 3: HDI table scrape from Wikipedia
+The Human Development Index (HDI) is a summary measure of average achievement in key dimensions of human development: a long and healthy life, being knowledgeable and have a decent standard of living. The HDI is the geometric mean of normalized indices for each of the three dimensions. _(ref: United Nation's Development Program)_
+http://hdr.undp.org/en/content/human-development-index-hdi
+
+In addition to the survey, data was scraped from the Wikipedia site noted below, which assigns the 2016 estimated HDI for 2015, by country. This data was then merged with they survey data, by country, in order to test for correlation between procrastination and the estimated HDI factor.  
+
+<br>
 
 
 ```r
@@ -212,9 +186,13 @@ resp_attrwHDI = merge(x=resp_attr,y=HDI_data,by.x='Country_Res',by.y='Country',a
 resp_attrwHDI = resp_attrwHDI[order(resp_attrwHDI$ID),]
 ```
 
+<br>
 
-# Question 4: Preliminary Analysis
+#### Preliminary Analysis
 
+Within the random population sample across Company Corp's offices, some of the respondents turned out to be minors. This was noted by any respondent with an age of 18 or under.  Company Corp. advised Cool DS Inc. that minors should not be included in the analysis, so these respondents were removed from further review. This resulted in a new subset of 4,036 respondents.
+
+<br>
 
 
 ```r
@@ -227,12 +205,20 @@ resp_answers = resp_answers[row_keep,]
 
 #Merge attributes with question answers for analysis
 resp_full = merge(x=resp_answers,y=resp_attrwHDI,by.x='ID',by.y='ID',all.y=TRUE)
+```
+
+<br>
+
+One of the first things we can see from a statistical analysis across our data population, are the descriptive statistics on Age, Income, HDI and the average response for the four procrastionation scales.  Something to note is the N, or number of individuals measured in the descriptive statistic.  For annual income this number is 3,621.  This number is less than the 4,036 total population because some customers left this survey field empty.  Also to note, the N for HDI is 3,844.  This is due to some respondents not populating their county of residence within the survey. So when the HDI statistics were calculated, those with a country of residence of NA were not included.
+
+<br>
 
 
+```r
 # 4B:
 #statistics table
-stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],type='text',
-					summary.stat=c('n','min','p25','median','p75','max','mean','sd'))
+stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],
+					summary.stat=c('n','min','p25','median','p75','max','mean','sd'),type='text')
 ```
 
 ```
@@ -250,48 +236,57 @@ stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWL
 ## ------------------------------------------------------------------------------
 ```
 
-```r
-#Create 4 plots for sample figure:
+<br>
 
+The graphs below show a histogram of Age, HDI and Annual Income across respondents.  The boxplot chart gives shows a measure of the average of each of our procrastination scales.  THe histogram of Age shows as for the most part, normally distributed.  However, the HDI histogram shows as very left skewed and the histogram of Annual Income as fairly right skewed with a bit of bimodality.
+
+Also included are frequency tables to give Company Corp. a better idea of the population distribution of it's customer base. What's interesting is the high number of individuals who self-describe as procrastinators and who are also viewed as procrastinators by others.
+
+_Please note that the frequency tables for Occupation Category and Participants Per Country are rather large, so the top 10 and 20 of each table, respectively, are shown.  For details on how the Occupation Category keywords were matched, and for a list of the Remaining Counties in the Particpants per Country list, please see the 'Job_Keyword_Mapping.csv' and 'Remaing_Countries.csv' files for details._
+
+<br>
+
+
+```r
 h1 = gghistogram(resp_full,x='Age',y='..count..',
 								 bins=10,
 								 fill='blue',
 								 size=2,
-								 title='Age',
-								 color='white'
+								 title='Histogram of Age',
+								 color='white',
+								 ylab='Count'
 )
 
-h1 + font('x.text',size=8)
-```
+h1 = h1 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-1.png)<!-- -->
 
-```r
 h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
-								 bins=10,
 								 fill='blueviolet',
 								 size=2,
-								 title='Ann Inc',
-								 color='white'
+								 bins=25,
+								 title='Histogram of Annual Income',
+								 color='white',
+								 ylab='Count',
+								 xlab='Annual Income'
 )
 
-h2 + font('x.text',size=10)
-```
+Annual_Inc_Clean = resp_full[which(!is.na(resp_full$Annual_Inc)),'Annual_Inc']
 
-```
-## Warning: Removed 415 rows containing non-finite values (stat_bin).
-```
+h2 = h2 + font('xy.text',size=12) + 
+  theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30) +
+  scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-2.png)<!-- -->
-
-```r
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=5,
+								 bins=10,
 								 fill='cadetblue3',
 								 size=2,
-								 title='HDI',
-								 color='white'
+								 title='Histogram of HDI',
+								 color='white',
+								 ylab='Count'
 )
+
+h3 = h3 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
 DPMetric <- resp_full["DP_Avg"]
 DPMetric$Variable <- 'DP_Avg'
@@ -315,31 +310,20 @@ h4 = ggboxplot(metrics,x='Variable',
 							 y='Value',
 							 color='Variable',
 							 palette='jco',
-							 size=1.5
-)
+							 size=1,
+							 xlab='')
 
 
-h4 + font('x.text',size=10)
-```
+h4 = h4 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  rotate_x_text(30)
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-3.png)<!-- -->
-
-```r
-ggarrange(ggarrange(h1,h2,h3,ncol=3,labels=c('1','2','3')),
-					h4,
+ggarrange(h1,h3,
+					h2,h4,
 					nrow=2,
-					labels='4')
+					ncol=2)
 ```
 
-```
-## Warning: Removed 415 rows containing non-finite values (stat_bin).
-```
-
-```
-## Warning: Removed 192 rows containing non-finite values (stat_bin).
-```
-
-![](MSDS_CaseStudy2_Master_files/figure-html/Question4 Preliminary Analysis-4.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question4_Preliminary_Analysis3-1.png)<!-- -->
 
 ```r
 # Neither the Age nor Annual Income histograms are particularly normally distributed.  The Age histogram is a bit of a bimodal
@@ -374,121 +358,355 @@ keywords = jobs_count[1:10,]
 keywords_del = c('and','of')
 top10Jobs = subset(keywords,!keywords$title %in% keywords_del)
 
+#For the codebook only
+#These are the job assignments we subjectively made to get the top10 job counts shown:
+top_jobs = match_list(resp_full$Current_Occ,findtext=keywords$title)
+joblist_replace = character()
+for (i in 1:length(top10Jobs$title)) {
+joblist_replace = c(joblist_replace,paste(tolower(as.character(top10Jobs$title[i])),'<-', unique(unique(top_jobs[[i]][,2]))))
+}
+write.csv(joblist_replace,'Job_Keyword_Mapping.csv')
+
 
 # Frequencies per column 
 # Unique distributions
+
 # Gender
-apply(resp_full["Gender"], 2, table)
+gender_table = as.data.frame(table(resp_full$Gender))
+colnames(gender_table) = c('Gender','Count')
+kable(gender_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(gender_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##        Gender
-## Female   2309
-## Male     1721
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Gender </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2309 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1721 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 # WorkStatus
-apply(resp_full["Work_Status"], 2, table)
+work_table = as.data.frame(table(resp_full$Work_Status))
+colnames(work_table) = c('Status','Count')
+work_table = work_table[order(work_table$Count,decreasing=TRUE),]
+kable(work_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options=c('striped','condensed'),full_width=FALSE)%>%
+  row_spec(row=1:dim(work_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##            Work_Status
-## full-time         2260
-## part-time          465
-## retired            174
-## student            837
-## unemployed         258
-```
+<table class="table table-striped table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Status </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2260 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 837 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 465 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 258 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 174 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 #Distributions across Gender and Work Status
-with(resp_full, table(Gender, Work_Status))
+genderwork_table = as.data.frame(table(resp_full$Gender,resp_full$Work_Status))
+colnames(genderwork_table) = c('Gender','Work_Status','Count')
+genderwork_table = genderwork_table[order(genderwork_table$Count,decreasing=TRUE),]
+kable(genderwork_table,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(genderwork_table)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##         Work_Status
-## Gender   full-time part-time retired student unemployed
-##   Female      1209       312      86     504        168
-##   Male        1047       152      88     333         89
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Gender </th>
+   <th style="text-align:left;"> Work_Status </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1209 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> full-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 1047 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 504 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> student </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 333 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 312 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 168 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> part-time </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 152 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> unemployed </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 89 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Male </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 88 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Female </td>
+   <td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> retired </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 86 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
-top10Jobs
+kable(top10Jobs,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:dim(top10Jobs)[1],bold=T,color='white',background='darkred')
 ```
 
-```
-##          title count
-## 589    teacher    90
-## 349    manager    84
-## 48   assistant    65
-## 464  professor    56
-## 56    attorney    53
-## 218   engineer    46
-## 122    college    46
-## 179   director    45
-## 131 consultant    44
-## 31     analyst    38
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> title </th>
+   <th style="text-align:right;"> count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> teacher </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 90 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> manager </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 84 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> assistant </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 65 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> professor </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 56 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> attorney </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 53 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> engineer </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 46 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> college </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 46 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> director </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 45 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> consultant </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 44 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> analyst </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 38 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 # 4D:
 
 # Counts of participants per country in descending order
 
-countryCt <- count(resp_full, resp_full$Country_Res)
+countryCt = as.data.frame(table(resp_full$Country_Res))
+colnames(countryCt) = c('Country','Count')
+sortedCC = countryCt[order(countryCt$Count, decreasing = TRUE),]
+kable(head(sortedCC,19),row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:19,bold=T,color='white',background='darkred')
 ```
 
-```
-## Warning: package 'bindrcpp' was built under R version 3.3.3
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;"> Country </th>
+   <th style="text-align:right;"> Count </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> United States </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 2785 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Canada </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 243 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> United Kingdom </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 177 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Australia </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 99 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> India </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 78 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Italy </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 62 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Germany </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 36 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Brazil </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 20 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Ireland </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 19 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Isreal </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 19 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Netherlands </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 18 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Sweden </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 15 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Norway </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 14 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> France </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Japan </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Spain </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 13 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> China </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Finland </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white;background-color: darkred;"> Mexico </td>
+   <td style="text-align:right;font-weight: bold;color: white;background-color: darkred;"> 12 </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
-colnames(countryCt) <- c("Country", "Count")
+write.csv(sortedCC[21:length(sortedCC$Country),],'Remaining_Countries.csv')
 
-sortedCC <- countryCt[order(countryCt$Count, decreasing = TRUE),]
 
-print(sortedCC)
-```
-
-```
-## # A tibble: 91 x 2
-##           Country Count
-##            <fctr> <int>
-##  1  United States  2785
-##  2         Canada   243
-##  3 United Kingdom   177
-##  4           <NA>   160
-##  5      Australia    99
-##  6          India    78
-##  7          Italy    62
-##  8        Germany    36
-##  9         Brazil    20
-## 10        Ireland    19
-## # ... with 81 more rows
-```
-
-```r
 # 4E:
+
 
 # Find the number of people whose self view matched others view
 
 resp_full$Others_Score <- as.character(resp_full$Others_Score)
 resp_full$Self_Score <- as.character(resp_full$Self_Score)
 
-viewMatch <- count(resp_full[which(resp_full$Self_Score == resp_full$Others_Score),])
-print(viewMatch)
+match_yes = sum(resp_full$Self_Score == 'yes' & resp_full$Others_Score == 'yes')
+match_no = sum(resp_full$Self_Score == 'no' & resp_full$Others_Score == 'no')
+match_either = as.data.frame(cbind(match_yes,match_no))
+colnames(match_either) = c('Others Agree I Procrastinate','Others Agree I Do Not Procrastinate')
+kable(match_either,row.names=FALSE,format='html')%>%
+  kable_styling(bootstrap_options='striped',full_width=FALSE)%>%
+  row_spec(row=1:1,bold=T,color='black',background='beige')%>%
+  column_spec(1:2,width='1cm')
 ```
 
-```
-## # A tibble: 1 x 1
-##       n
-##   <int>
-## 1  2846
-```
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:right;"> Others Agree I Procrastinate </th>
+   <th style="text-align:right;"> Others Agree I Do Not Procrastinate </th>
+  </tr></thead>
+<tbody><tr>
+<td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; "> 2358 </td>
+   <td style="text-align:right;font-weight: bold;color: black;background-color: beige;width: 1cm; "> 482 </td>
+  </tr></tbody>
+</table>
 
+<br>
 
-## Question 5: Visualization and Deeper Analysis
+#### Deeper Analysis and Visualization
+
+A deeper analysis of the datas are also shown below. For several analyses, a mean value was taken to get a better perspective of the population as whole, instead of displaying unique values. This aides in the visualization of the variables. A few interesting things to note:
+
+* There are 6 countries that exist in both DP and API top 15 Means.  They are:Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka   
+  and Uraguay.
+
+* As noted by the 'Average Annual Income vs Average Age' graph, there does seem to be a linear relationship between age and mean annual 	income until about age 40.  However, starting at around age 40, an income disparity between men and women can be seen that continues   with age.
+  
+* The 'Mean Life Satisfaction Mean by Mean HDI' scatterplot does not show a discernable relationship between the Satisfaction with Life
+  Scale and mean HDI factor, however, the 'Mean Life Satisfaction per HDI Category' barplot below it does signify some relationship 
+  between the Satisfaction with Life Scale and the HDI Category (Very High, High, Medium and Low), with the Low HDI Category having the   lowest SWLS average.
+
+<br>
 
 
 ```r
@@ -509,17 +727,15 @@ Top15DP <- SortedDP[1:15,]
 ##Set chunk size for output
 ggplot(Top15DP, aes(reorder(Country_Res, -DP_Avg), DP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
-	ggtitle("Countries with the top 15 DPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	ggtitle("Countries with the top 15 DP Average") +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
 	ylab("DP Mean Value")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-1.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-1.png)<!-- -->
 
 ```r
-####START HERE:
-
 # 5C:
 AIPMeanSub <- resp_full[,c("Country_Res","AIP_Avg", "HDI_Cat")]
 AIPMeanAvg <- aggregate(AIP_Avg~Country_Res, AIPMeanSub, mean)
@@ -536,13 +752,14 @@ Top15AIP <- SortedAIP[1:15,]
 ##Set chunk size for output
 ggplot(Top15AIP, aes(reorder(Country_Res, -AIP_Avg), AIP_Avg))+
 	geom_bar(aes(fill=HDI_Cat), stat="identity")+
-	ggtitle("Countries with the top 15 AIPMean") +
-	theme(plot.title = element_text(hjust = 0.5)) +
+	ggtitle("Countries with the top 15 AIP Average") +
+	theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_text(angle=45,hjust=1)) +
 	xlab("Country Name")+
-	ylab("AIP Mean Value")
+	ylab("AIP Mean Value")+
+  scale_x_discrete(labels=c("Dominican Republic"="Dom. Republic"))
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-2.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-2.png)<!-- -->
 
 ```r
 #Find countries that exist in both the top 15 AIP and DP Means
@@ -560,10 +777,6 @@ merge(Top15DP, Top15AIP, by.x=c("Country_Res"), by.y=c("Country_Res"))
 ```
 
 ```r
-# There are 6 countries that exist in both DP and API top 15 Means.  They are:
-# Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka, Uraguay
-
-
 # 5D:
 
 # Subset merged data frame to only include those rows where Gender is not empty and Annual Income is not empty
@@ -573,23 +786,22 @@ mDFMF <- subset(resp_full[c("Country_Res","Age","Annual_Inc","Gender")], Gender 
 mDFMFAvg <- aggregate(Annual_Inc~Age + Gender, mDFMF, mean)
 
 
-par(mar=c(4,6,2,2))
-plot(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = ifelse(mDFMFAvg$Gender == "Female", "hot pink", "blue"), xlab="", ylab="")
-axis(1,at=pretty(mDFMFAvg$Age),labels=pretty(mDFMFAvg$Age),las=1)
-axis(2,at=pretty(mDFMFAvg$Annual_Inc),labels=format(pretty(mDFMFAvg$Annual_Inc),big.mark=",", scientific=FALSE),las=1)
-mtext(text="Age", side=1, line=2)
-mtext(text="Annual Income", side=2, line=5)
-title("Mean Income by Age and Gender")
-abline(lm(mDFMFAvg$Annual_Inc ~ mDFMFAvg$Age), col = "green")
+h5 = ggscatter(mDFMFAvg,y='Annual_Inc',x='Age',
+								 color='Gender',
+								 size=2,
+								 title='Average Annual Income vs Average Age',
+								 ylab='Average Annual Income',
+								 xlab='Average Age')
+
+h5 = h5 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
+  scale_y_continuous(label=dollar_format(),breaks = round(seq(0, max(mDFMFAvg$Annual_Inc), by = 25000),1))
+
+h5
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-3.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-3.png)<!-- -->
 
 ```r
-# There does seem to be a relationship between age and annual income, with annual income increasing with age.  However,
-# there also seems to be a large disparity between males and females and their annual income starting at around age 40 and 
-# growing from there.
-
 # 5E: 
 
 # Subset merged data frame to only include those rows where Gender is not empty
@@ -602,26 +814,41 @@ par(mar=c(4,6,2,2))
 plot(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI, xaxt="n", yaxt="n", pch = 16, cex = 1.3, col = "blue", xlab="", ylab="")
 axis(1,at=pretty(mDFHDIAvg$HDI),labels=pretty(mDFHDIAvg$HDI),las=1)
 axis(2,at=pretty(mDFHDIAvg$SWLS_Avg),labels=format(pretty(mDFHDIAvg$SWLS_Avg),big.mark=",", scientific=FALSE),las=1)
-mtext(text="HDI", side=1, line=2)
+mtext(text="Mean HDI", side=1, line=2)
 mtext(text="Mean Life Satisfaction", side=2, line=5)
-title("Life Satisfaction Mean by HDI")
+title("Mean Life Satisfaction Mean by Mean HDI")
 abline(lm(mDFHDIAvg$SWLS_Avg ~ mDFHDIAvg$HDI), col = "green")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-4.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-4.png)<!-- -->
 
 ```r
 # Barchart between HDI Category and Mean Life Satisfaction
 
-ggplot(mDFHDIAvg, aes(fill=HDI_Cat, y=SWLS_Avg, x=HDI_Cat)) + 
+mDFHDIAvg$HDI_Cat_Relevel = factor(mDFHDIAvg$HDI_Cat,levels=c('Very High','High','Medium','Low'))
+
+ggplot(mDFHDIAvg, aes(fill=HDI_Cat_Relevel, y=SWLS_Avg, x=HDI_Cat_Relevel)) + 
 	scale_x_discrete(labels=c("High Human Development" = "HHD", "Very High Human Development" = "VHHD",
 														"Medium Human Development" = "MHD", "Low Human Development" = "LHD")) +
-	geom_bar(position="dodge", stat="identity") +
-	ggtitle("Mean Life Satisfaction per HDI Category Test") +
+	geom_bar(position="dodge", stat="identity", width=.5) +
+	ggtitle("Mean Life Satisfaction per HDI Category") +
 	theme(plot.title = element_text(hjust = 0.5)) +
 	xlab("Human Development Category") +
-	ylab("Life Satisfaction Mean")
+	ylab("Mean Life Satisfaction")
 ```
 
-![](MSDS_CaseStudy2_Master_files/figure-html/Question5 Preliminary Analysis-5.png)<!-- -->
+![](MSDS_CaseStudy2_Master_files/figure-html/Question5_Preliminary_Analysis-5.png)<!-- -->
 
+<br>
+
+### Conclusion
+
+In conclusion, we are able to note several findings regarding Company Corp's customer population in terms of invidual qualities and procrastination tendencies in relation to the Human Development Index of that individuals country of residence.
+
+1. When assessing income, age and gender seem to matter.  As displayed in the 'Average Annual Income vs Average Age' graph, the relationship between age and income grows in a linear fashion regardless of gender, but starting around age 40, the great income divide begins.  We cannot infer that gender alone is the cause of this income disparity; factors such as taking time off of work to have children, etc. could play a role.  However, the findings are interesting.
+
+2. There does seem to be a pattern among counties that procrastinate the most.  This can be found in the 'Countries with the top 15 AIP Average' historam and the 'Countries with the top 15 DP Average' histogram, both which contain the countries of Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka and Uraguay. And there does seem to be some correlation between the level of Procrastination with the HDI Category.  So do Company Corp. customers living in countries with higher Human Develoment Indices tend to procrastinate more?  It seems this may be the case, but further analysis may need to be performed.
+
+Since a random sample of Company Corp's customer population was taken, we can make an inference of these findings across all of Company Corp's customer population. An output of the details of this study can also be found in the 'Procrastination Details.pdf' file.
+
+<br>
