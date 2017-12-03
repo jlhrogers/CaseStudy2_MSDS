@@ -100,8 +100,7 @@ resp_attr_names = c('ID','Age','Gender','Kids','Edu','Work_Status',
 		'Num_daught')
 
 resp_answer_names = c('ID',paste('DP_',1:5,sep=''),paste('AIP_',1:15,sep=''),
-											paste('GP_',1:20,sep=''),paste('SWLS_',1:5,sep=''),'
-_Score','Others_Score')
+		paste('GP_',1:20,sep=''),paste('SWLS_',1:5,sep=''),'Self_Score','Others_Score')
 
 colnames(resp_attr) = resp_attr_names
 colnames(resp_answers) = resp_answer_names
