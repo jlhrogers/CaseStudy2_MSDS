@@ -1,0 +1,231 @@
+Finalized HDI table (from 3A and 3B),,,
+,Country,HDI,Category
+2,Norway,0.949,Very High Human Development
+3,Australia,0.939,Very High Human Development
+4,Switzerland,0.939,Very High Human Development
+5,Germany,0.926,Very High Human Development
+6,Denmark,0.925,Very High Human Development
+7,Singapore,0.925,Very High Human Development
+8,Netherlands,0.924,Very High Human Development
+9,Ireland,0.923,Very High Human Development
+10,Iceland,0.921,Very High Human Development
+11,Canada,0.92,Very High Human Development
+12,United States,0.92,Very High Human Development
+13,Hong Kong,0.917,Very High Human Development
+14,New Zealand,0.915,Very High Human Development
+15,Sweden,0.913,Very High Human Development
+16,Liechtenstein,0.912,Very High Human Development
+17,United Kingdom,0.909,Very High Human Development
+18,Japan,0.903,Very High Human Development
+19,South Korea,0.901,Very High Human Development
+20,Israel,0.899,Very High Human Development
+21,Luxembourg,0.898,Very High Human Development
+22,France,0.897,Very High Human Development
+23,Belgium,0.896,Very High Human Development
+24,Finland,0.895,Very High Human Development
+25,Austria,0.893,Very High Human Development
+26,Slovenia,0.89,Very High Human Development
+27,Italy,0.887,Very High Human Development
+210,Spain,0.884,Very High Human Development
+31,Czech Republic,0.878,Very High Human Development
+41,Greece,0.866,Very High Human Development
+51,Brunei,0.865,Very High Human Development
+61,Estonia,0.865,Very High Human Development
+71,Andorra,0.858,Very High Human Development
+81,Cyprus,0.856,Very High Human Development
+91,Malta,0.856,Very High Human Development
+101,Qatar,0.856,Very High Human Development
+111,Poland,0.855,Very High Human Development
+121,Lithuania,0.848,Very High Human Development
+131,Chile,0.847,Very High Human Development
+141,Saudi Arabia,0.847,Very High Human Development
+151,Slovakia,0.845,Very High Human Development
+161,Portugal,0.843,Very High Human Development
+171,United Arab Emirates,0.84,Very High Human Development
+181,Hungary,0.836,Very High Human Development
+191,Latvia,0.83,Very High Human Development
+201,Argentina,0.827,Very High Human Development
+211,Croatia,0.827,Very High Human Development
+221,Bahrain,0.824,Very High Human Development
+231,Montenegro,0.807,Very High Human Development
+241,Russia,0.804,Very High Human Development
+251,Romania,0.802,Very High Human Development
+261,Kuwait,0.8,Very High Human Development
+212,Belarus,0.796,High Human Development
+32,Oman,0.796,High Human Development
+42,Barbados,0.795,High Human Development
+52,Uruguay,0.795,High Human Development
+62,Bulgaria,0.794,High Human Development
+72,Kazakhstan,0.794,High Human Development
+82,Bahamas,0.792,High Human Development
+92,Malaysia,0.789,High Human Development
+102,Palau,0.788,High Human Development
+112,Panama,0.788,High Human Development
+122,Antigua and Barbuda,0.786,High Human Development
+132,Seychelles,0.782,High Human Development
+142,Mauritius,0.781,High Human Development
+152,Trinidad and Tobago,0.78,High Human Development
+162,Costa Rica,0.776,High Human Development
+172,Serbia,0.776,High Human Development
+182,Cuba,0.775,High Human Development
+192,Iran,0.774,High Human Development
+202,Georgia,0.769,High Human Development
+213,Turkey,0.767,High Human Development
+222,Venezuela,0.767,High Human Development
+232,Sri Lanka,0.766,High Human Development
+242,Saint Kitts and Nevis,0.765,High Human Development
+252,Albania,0.764,High Human Development
+262,Lebanon,0.763,High Human Development
+271,Mexico,0.762,High Human Development
+28,Azerbaijan,0.759,High Human Development
+29,Brazil,0.754,High Human Development
+214,Grenada,0.754,High Human Development
+33,Bosnia and Herzegovina,0.75,High Human Development
+43,Macedonia,0.748,High Human Development
+53,Algeria,0.745,High Human Development
+63,Armenia,0.743,High Human Development
+73,Ukraine,0.743,High Human Development
+83,Jordan,0.741,High Human Development
+93,Peru,0.74,High Human Development
+103,Thailand,0.74,High Human Development
+113,Ecuador,0.739,High Human Development
+123,China,0.738,High Human Development
+133,Fiji,0.736,High Human Development
+143,Mongolia,0.735,High Human Development
+153,Saint Lucia,0.735,High Human Development
+163,Jamaica,0.73,High Human Development
+173,Colombia,0.727,High Human Development
+183,Dominica,0.726,High Human Development
+193,Suriname,0.725,High Human Development
+203,Tunisia,0.725,High Human Development
+215,Dominican Republic,0.722,High Human Development
+223,Saint Vincent and the Grenadines,0.722,High Human Development
+233,Tonga,0.721,High Human Development
+243,World,0.717,High Human Development
+253,Libya,0.716,High Human Development
+263,Belize,0.706,High Human Development
+272,Samoa,0.704,High Human Development
+281,Maldives,0.701,High Human Development
+291,Uzbekistan,0.701,High Human Development
+216,Moldova,0.699,Medium Human Development
+34,Botswana,0.698,Medium Human Development
+44,Gabon,0.697,Medium Human Development
+54,Paraguay,0.693,Medium Human Development
+64,Egypt,0.691,Medium Human Development
+74,Turkmenistan,0.691,Medium Human Development
+84,Indonesia,0.689,Medium Human Development
+94,Palestine,0.684,Medium Human Development
+104,Vietnam,0.683,Medium Human Development
+114,Philippines,0.682,Medium Human Development
+124,El Salvador,0.68,Medium Human Development
+134,Bolivia,0.674,Medium Human Development
+144,South Africa,0.666,Medium Human Development
+154,Kyrgyzstan,0.664,Medium Human Development
+164,Iraq,0.649,Medium Human Development
+174,Cape Verde,0.648,Medium Human Development
+184,Morocco,0.647,Medium Human Development
+194,Nicaragua,0.645,Medium Human Development
+204,Guatemala,0.64,Medium Human Development
+217,Namibia,0.64,Medium Human Development
+218,Guyana,0.638,Medium Human Development
+35,Micronesia,0.638,Medium Human Development
+45,Tajikistan,0.627,Medium Human Development
+55,Honduras,0.625,Medium Human Development
+65,India,0.624,Medium Human Development
+75,Bhutan,0.607,Medium Human Development
+85,Timor Leste,0.605,Medium Human Development
+95,Vanuatu,0.597,Medium Human Development
+105,"Congo, Republic of the",0.592,Medium Human Development
+115,Equatorial Guinea,0.592,Medium Human Development
+125,Kiribati,0.588,Medium Human Development
+135,Laos,0.586,Medium Human Development
+145,Bangladesh,0.579,Medium Human Development
+155,Ghana,0.579,Medium Human Development
+165,Zambia,0.579,Medium Human Development
+175,São Tomé and Príncipe,0.574,Medium Human Development
+185,Cambodia,0.563,Medium Human Development
+195,Nepal,0.558,Medium Human Development
+205,Myanmar,0.556,Medium Human Development
+219,Kenya,0.555,Medium Human Development
+224,Pakistan,0.55,Medium Human Development
+220,Swaziland,0.541,Low Human Development
+36,Syria,0.536,Low Human Development
+46,Angola,0.533,Low Human Development
+56,Tanzania,0.531,Low Human Development
+66,Nigeria,0.527,Low Human Development
+76,Cameroon,0.518,Low Human Development
+86,Papua New Guinea,0.516,Low Human Development
+96,Zimbabwe,0.516,Low Human Development
+106,Solomon Islands,0.515,Low Human Development
+116,Mauritania,0.513,Low Human Development
+126,Madagascar,0.512,Low Human Development
+136,Rwanda,0.498,Low Human Development
+146,Comoros,0.497,Low Human Development
+156,Lesotho,0.497,Low Human Development
+166,Senegal,0.494,Low Human Development
+176,Haiti,0.493,Low Human Development
+186,Uganda,0.493,Low Human Development
+196,Sudan,0.49,Low Human Development
+206,Togo,0.487,Low Human Development
+2110,Benin,0.485,Low Human Development
+225,Yemen,0.482,Low Human Development
+226,Afghanistan,0.479,Low Human Development
+37,Malawi,0.476,Low Human Development
+47,Côte d'Ivoire,0.474,Low Human Development
+57,Djibouti,0.473,Low Human Development
+67,Gambia,0.452,Low Human Development
+77,Ethiopia,0.448,Low Human Development
+87,Mali,0.442,Low Human Development
+97,"Congo, Democratic Republic of the",0.435,Low Human Development
+107,Liberia,0.427,Low Human Development
+117,Guinea Bissau,0.424,Low Human Development
+127,Eritrea,0.42,Low Human Development
+137,Sierra Leone,0.42,Low Human Development
+147,Mozambique,0.418,Low Human Development
+157,South Sudan,0.418,Low Human Development
+167,Guinea,0.414,Low Human Development
+177,Burundi,0.404,Low Human Development
+187,Burkina Faso,0.402,Low Human Development
+197,Chad,0.396,Low Human Development
+207,Niger,0.353,Low Human Development
+2111,Central African Republic,0.352,Low Human Development
+,,,
+____________________________,,,
+,,,
+Top 15 DP Sorted Countries and their HDI (5C),,,
+,Country,DPMean,Category
+14,Brunei,5,Very High
+57,Panama,5,High
+62,Qatar,5,Very High
+44,Lithuania,4.6,Very High
+71,Sri Lanka,4.4,High
+24,Ecuador,4.133333333,High
+15,Bulgaria,4.1,High
+7,Austria,4.066666667,Very High
+67,Slovenia,4,Very High
+79,Uruguay,3.933333333,High
+27,Finland,3.9,Very High
+61,Portugal,3.857142857,Very High
+23,Dominican Republic,3.8,High
+42,Kazakhstan,3.8,High
+64,Russia,3.8,Very High
+____________________________,,,
+,,,
+Top 15 API Sorted Countries and their HDI (5B),,,
+,Country,AIPMean,Category
+23,Dominican Republic,4.533333333,High
+20,Cyprus,4.4,Very High
+62,Qatar,4.066666667,Very High
+57,Panama,4,High
+35,Iceland,3.866666667,Very High
+24,Ecuador,3.755555556,High
+71,Sri Lanka,3.733333333,High
+43,Kenya,3.666666667,Medium
+75,Turkey,3.651851852,High
+79,Uruguay,3.6,High
+28,France,3.564102564,Very High
+37,Iran,3.533333333,High
+51,Myanmar,3.533333333,Medium
+54,Nicaragua,3.533333333,Medium
+60,Poland,3.533333333,Very High
+____________________________,,,
