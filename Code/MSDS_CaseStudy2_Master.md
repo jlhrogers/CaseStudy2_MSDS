@@ -845,6 +845,6 @@ In conclusion, we are able to note several findings regarding Company Corp's cus
 
 2. There does seem to be a pattern among countries that procrastinate the most.  This can be found in the 'Countries with the top 15 AIP Average' histogram and the 'Countries with the top 15 DP Average' histogram, both which contain the countries of Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka and Uruguay. Also, there does seem to be some correlation between the level of Procrastination with the HDI Category.  So do Company Corp. customers living in countries with higher Human Development Indices tend to procrastinate more?  It seems this may be the case, but further analysis may need to be performed.
 
-Since a random sample of Company Corp's customer population was taken, we can make an inference of these findings across all of Company Corp's customer population. An output of the details of this study can also be found in the 'Procrastination Details.pdf' file.
+Since a random sample of Company Corp's customer population was taken, we can make an inference of these findings across all of Company Corp's customer population.
 
 <br>
