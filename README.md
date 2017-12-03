@@ -1,4 +1,4 @@
-# MSDS_CaseStudy2_Master
+# MSDS_CaseStudy2_Master README
 Jose Torres and Lisa Street
 
 ### Introduction:
