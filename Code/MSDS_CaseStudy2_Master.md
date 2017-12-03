@@ -95,9 +95,9 @@ resp_attr = cbind(ID,dataset_raw[,1:14])
 resp_answers = cbind(ID,dataset_raw[,15:length(dataset_raw)])
 
 resp_attr_names = c('ID','Age','Gender','Kids','Edu','Work_Status',
-										'Annual_Inc','Current_Occ','Employ_Yrs','Employ_Mths',
-										'Comm_Size','Country_Res','Married','Num_sons',
-										'Num_daught')
+		'Annual_Inc','Current_Occ','Employ_Yrs','Employ_Mths',
+		'Comm_Size','Country_Res','Married','Num_sons',
+		'Num_daught')
 
 resp_answer_names = c('ID',paste('DP_',1:5,sep=''),paste('AIP_',1:15,sep=''),
 											paste('GP_',1:20,sep=''),paste('SWLS_',1:5,sep=''),'
@@ -117,14 +117,14 @@ resp_attr = gsubkeep(pattern='^$|^ $',replacement=NA,x=resp_attr)
 
 # Now go through individual attributes list and replace 'bad' values with NA
 cleanup_list = data.frame(rbind(c(' Kids$','',4), #remove 'Kids'
-																c('0', NA, 6), #Work status
-																c('0|please specify',NA,8), #Occupation 
-																c('999',NA,9), #Employment Years
-																c('[08]',NA,11), #Community Size
-																c('0',NA,12), #Country of Residence
-																c('0',NA,13), #Married
-																c('Male','1',14), #Number of sons
-																c('Female','2',14))) #Number of sons
+		c('0', NA, 6), #Work status
+		c('0|please specify',NA,8), #Occupation 
+		c('999',NA,9), #Employment Years
+		c('[08]',NA,11), #Community Size
+		c('0',NA,12), #Country of Residence
+		c('0',NA,13), #Married
+		c('Male','1',14), #Number of sons
+		c('Female','2',14))) #Number of sons
 
 # Employ_Yrs_num - replace small numbers with 0.  Round to nearest integer.
 resp_attr[which(resp_attr[,9] < .5),9] = 0
@@ -219,7 +219,7 @@ One of the first things found from a statistical analysis across the data popula
 # 4B:
 #statistics table
 stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWLS_Avg')],
-					summary.stat=c('n','min','p25','median','p75','max','mean','sd'),type='text')
+	summary.stat=c('n','min','p25','median','p75','max','mean','sd'),type='text')
 ```
 
 ```
@@ -250,25 +250,25 @@ _Please note that the frequency tables for Occupation Category and Participants 
 
 ```r
 h1 = gghistogram(resp_full,x='Age',y='..count..',
-								 bins=10,
-								 fill='blue',
-								 size=2,
-								 title='Histogram of Age',
-								 color='white',
-								 ylab='Count'
+		bins=10,
+		fill='blue',
+		size=2,
+		title='Histogram of Age',
+		color='white',
+		ylab='Count'
 )
 
 h1 = h1 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
 
 
 h2 = gghistogram(resp_full,x='Annual_Inc',y='..count..',
-								 fill='blueviolet',
-								 size=2,
-								 bins=25,
-								 title='Histogram of Annual Income',
-								 color='white',
-								 ylab='Count',
-								 xlab='Annual Income'
+		fill='blueviolet',
+		size=2,
+		bins=25,
+		title='Histogram of Annual Income',
+		color='white',
+		ylab='Count',
+		xlab='Annual Income'
 )
 
 Annual_Inc_Clean = resp_full[which(!is.na(resp_full$Annual_Inc)),'Annual_Inc']
@@ -279,12 +279,12 @@ h2 = h2 + font('xy.text',size=12) +
   scale_x_continuous(label=dollar_format(),breaks = round(seq(min(Annual_Inc_Clean), max(Annual_Inc_Clean), by = 50000),1))
 
 h3 = gghistogram(resp_full,x='HDI',y='..count..',
-								 bins=10,
-								 fill='cadetblue3',
-								 size=2,
-								 title='Histogram of HDI',
-								 color='white',
-								 ylab='Count'
+		bins=10,
+		fill='cadetblue3',
+		size=2,
+		title='Histogram of HDI',
+		color='white',
+		ylab='Count'
 )
 
 h3 = h3 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5))
@@ -308,20 +308,20 @@ colnames(SWLSMetric) <- c("Value","Variable")
 metrics <- rbind(DPMetric, AIPMetric, GPMetric, SWLSMetric)
 
 h4 = ggboxplot(metrics,x='Variable',
-							 y='Value',
-							 color='Variable',
-							 palette='jco',
-							 size=1,
-							 xlab='')
+		y='Value',
+		color='Variable',
+		palette='jco',
+		size=1,
+		xlab='')
 
 
 h4 = h4 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
   rotate_x_text(30)
 
 ggarrange(h1,h3,
-					h2,h4,
-					nrow=2,
-					ncol=2)
+	h2,h4,
+	nrow=2,
+	ncol=2)
 ```
 
 ![](MSDS_CaseStudy2_Master_files/figure-html/Question4_Preliminary_Analysis3-1.png)<!-- -->
@@ -784,11 +784,11 @@ mDFMFAvg <- aggregate(Annual_Inc~Age + Gender, mDFMF, mean)
 
 
 h5 = ggscatter(mDFMFAvg,y='Annual_Inc',x='Age',
-								 color='Gender',
-								 size=2,
-								 title='Average Annual Income vs Average Age',
-								 ylab='Average Annual Income',
-								 xlab='Average Age')
+		color='Gender',
+		size=2,
+		title='Average Annual Income vs Average Age',
+		ylab='Average Annual Income',
+		xlab='Average Age')
 
 h5 = h5 + font('xy.text',size=12) + theme(plot.title=element_text(hjust=0.5)) +
   scale_y_continuous(label=dollar_format(),breaks = round(seq(0, max(mDFMFAvg$Annual_Inc), by = 25000),1))
@@ -826,7 +826,7 @@ mDFHDIAvg$HDI_Cat_Relevel = factor(mDFHDIAvg$HDI_Cat,levels=c('Very High','High'
 
 ggplot(mDFHDIAvg, aes(fill=HDI_Cat_Relevel, y=SWLS_Avg, x=HDI_Cat_Relevel)) + 
 	scale_x_discrete(labels=c("High Human Development" = "HHD", "Very High Human Development" = "VHHD",
-														"Medium Human Development" = "MHD", "Low Human Development" = "LHD")) +
+	"Medium Human Development" = "MHD", "Low Human Development" = "LHD")) +
 	geom_bar(position="dodge", stat="identity", width=.5) +
 	ggtitle("Mean Life Satisfaction per HDI Category") +
 	theme(plot.title = element_text(hjust = 0.5)) +
