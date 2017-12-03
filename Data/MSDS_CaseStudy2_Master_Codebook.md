@@ -145,7 +145,7 @@ _**GP (General Procrastination):**_
 	+ (GP 18) I usually accomplish all the things I plan to do in a day
 	+ (GP 19) I am continually saying "I'll do it tomorrow"
 	+ (GP 20) I usually take care of all the tasks I have to do before I settle down and relax for the evening
-* SWLS Variables: (All numeric ratings between 0 and 5)	
+* SWLS Variables: (All numeric ratings between 1 and 5)	
 	+ (SWLS 1) In most ways my life is close to my ideal
 	+ (SWLS 2)The conditions of my life are excellent
 	+ (SWLS 3) I am satisfied with my life
