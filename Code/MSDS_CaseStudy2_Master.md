@@ -66,7 +66,7 @@ source('MSDS6306_Final_Case_Study_Functions.R')
 
 #### Gather Data for Analysis
 
-The first task performed by Cool DS Inc. was to survey 4,264 customers within Company Corp's universal customer population. The customers surveyed were taken by random sample and each customer was asked to fill out a questionaire consisting of 61 questions related to personal and procrastiation scale questions.  Some of the questions were limited in answer by drop-down, and some allowed the customer to 'write-in' their own response. Results of each individuals survey were tallied and consolidated into one master spreadhseet. Because write-in was allowed on some questions, data clean-up on the final consolidated survey was required.  The average procrastination score across the four procrastination scales was calculated as well. The information below details how the data transformation and cleanup was performed.
+The first task performed by Cool DS Inc. was to survey 4,264 customers within Company Corp's universal customer population. The customers surveyed were taken by random sample and each customer was asked to fill out a questionaire consisting of 61 questions related to personal and procrastiation scale questions.  Some of the questions were limited in answer by drop-down, and some allowed the customer to 'write-in' their own response. Results of each individuals survey were tallied and consolidated into one master spreadsheet. Because write-in was allowed on some questions, data clean-up on the final consolidated survey was required.  The average procrastination score across the four procrastination scales was calculated as well. The information below details how the data transformation and cleanup was performed.
 
 <br>
 
