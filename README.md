@@ -1,8 +1,35 @@
-# CaseStudy2_MSDS
+# MSDS_CaseStud2_Master
 Jose Torres and Lisa Street
 
 ### Introduction:
 
+The files and folders contained within this repo were created to analyze Procrastination and HDI (Human Development Index) data for information on the procrastination tendencies of Company Corp.'s customer base.  Details below provide additional information of each file.
+
+**Code Folder:**
+
+* MSDS6306_Final_Case_Study_Functions.R - a set of custom functions used in the analysis by Cool DS Inc.
+* MSDS_CaseStudy2_Master.Rmd - the R Markdown file created by Cool DS Inc.
+* MSDS_CaseStudy2_Master.html - the html output file created when knitting the MSDS_CaseStudy2_Master.Rmd.
+* MSDS_CaseStudy2_Master.md - the Markdown file that details the project analysis and corresponding visuals (graphs).
+* MSDS_CaseStudy2_Master_files/figure-html folder - holds the images created when rendering the R Markdown. These images 
+        can be seen in the Markdown file.
+        
+**Data Folder:**
+
+* HDI.csv - contains data collected from the UN's Human Development Index forecast.  This data was originally scraped from 
+        a Wikipedia site, but was written to a csv file for data transparency.\
+* Procrastination.csv - data gathered from a random sample of Company Corp.'s customer population.  
+* MSDS_CaseStudy2_Master_Codebook.md - a Markdown file that details the data in both the HDI.csv and Procrastination.csv files.
+
+**Output Folder:**
+
+* MSDS_CaseStudy2_Master_Question6_All_Data.csv - a data dump of all the Procrastination data merged with all of the HDI data.
+* MSDS_CaseStudy2_Master_Question6_HDI_Table_and_Country_Sort.csv - a data dump of the HDI table scraped from Wikipedia, with HDI       
+        Categories (Very High, High, Medium, Low) and a listing of countries, sorted by mean DP and mean AIP, highest to lowest.
+* Job_Keyword_Mapping.csv - details of the occupations listed in the Procrastination file and the category to which they were assigned
+        for analysis.
+* Remaining_Countries.csv - a list of the remaining countries not displayed in the Markdown file, that shows the top countries sorted by 
+        survey participant count, hightest to lowest.  The top 20 countries are shown in the 'MSDS_CaseStudy2_Master.md' file.
 
 ### Session Info:
 
