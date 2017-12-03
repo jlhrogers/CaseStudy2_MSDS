@@ -335,13 +335,8 @@ jobs = cbind(as.character(resp_full$Current_Occ), NA)
 
 jobs_matrix = unlist(apply(jobs,MARGIN=2,FUN=function(x){strsplit(x,' ')})) %>%
 	gsub(pattern='[[:punct:]]',replacement='') %>%
-	gsub(pattern='^$|^ $',replacement=NA) 
-
-jobs_matrix = unlist(apply(jobs,MARGIN=2,FUN=function(x){strsplit(x,' ')})) %>%
-	gsub(pattern='[[:punct:]]',replacement='') %>%
 	gsub(pattern='^$|^ $',replacement=NA) %>%
 	subset(!is.na(jobs_matrix))
-
 
 jobs_matrix = as.factor(tolower(jobs_matrix))
 
