@@ -110,7 +110,8 @@ _**GP (General Procrastination):**_
 	+ (DP 5) I put off making decisions until it's too late
 * AIP variables: (All numeric ratings between 1 and 5)	
 	+ (AIP 1) I pay my bills on time
-	+ (AIP 2) I am prompt and on time for most appointments.	+ (AIP 3) I lay out my clothes the night before I have an important 			appointment, so I won't be late
+	+ (AIP 2) I am prompt and on time for most appointments.	
+	+ (AIP 3) I lay out my clothes the night before I have an important appointment, so I won't be late
 	+ (AIP 4) I find myself running later than I would like to be
 	+ (AIP 5) I don't get things done on time
 	+ (AIP 6) If someone were teaching a course on how to get things done on time, I would attend
