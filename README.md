@@ -1,9 +1,11 @@
-# MSDS_CaseStud2_Master
+# MSDS_CaseStudy2_Master
 Jose Torres and Lisa Street
 
 ### Introduction:
 
 The files and folders contained within this repo were created to analyze Procrastination and HDI (Human Development Index) data for information on the procrastination tendencies of Company Corp.'s customer base.  Details below provide additional information of each file.
+
+<br>
 
 **Code Folder:**
 
@@ -13,13 +15,17 @@ The files and folders contained within this repo were created to analyze Procras
 * MSDS_CaseStudy2_Master.md - the Markdown file that details the project analysis and corresponding visuals (graphs).
 * MSDS_CaseStudy2_Master_files/figure-html folder - holds the images created when rendering the R Markdown. These images 
         can be seen in the Markdown file.
-        
+ 
+ <br>
+ 
 **Data Folder:**
 
 * HDI.csv - contains data collected from the UN's Human Development Index forecast.  This data was originally scraped from 
         a Wikipedia site, but was written to a csv file for data transparency.\
 * Procrastination.csv - data gathered from a random sample of Company Corp.'s customer population.  
 * MSDS_CaseStudy2_Master_Codebook.md - a Markdown file that details the data in both the HDI.csv and Procrastination.csv files.
+
+<br>
 
 **Output Folder:**
 
@@ -30,6 +36,8 @@ The files and folders contained within this repo were created to analyze Procras
         for analysis.
 * Remaining_Countries.csv - a list of the remaining countries not displayed in the Markdown file, that shows the top countries sorted by 
         survey participant count, hightest to lowest.  The top 20 countries are shown in the 'MSDS_CaseStudy2_Master.md' file.
+
+<br>
 
 ### Session Info:
 
