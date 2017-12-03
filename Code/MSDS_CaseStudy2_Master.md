@@ -8,9 +8,9 @@ November 29, 2017
 
 <br>
 
-Procrastination is broadly defined as the avoidance of performing a task that needs to be accomplished.  The tasks in question can be of any magnitude and vary greatly in scope and impact.  A person's self view of their own procrastination tendencies can be difficult to measure or define. However, over the years several procrastination scales have been developed to help shed light on the subject. The impact of procrastination can be great, but the sooner a person can understand their own proclivity towards task avoidance, the better the chance they have to work on these challanges. 
+Procrastination is broadly defined as the avoidance of performing a task that needs to be accomplished.  The tasks in question can be of any magnitude and vary greatly in scope and impact.  A person's self-view of their own procrastination tendencies can be difficult to measure or define. However, over the years several procrastination scales have been developed to help shed light on the subject. The impact of procrastination can be great, but the sooner a person can understand their own proclivity towards task avoidance, the better the chance they have to work on these challenges. 
 
-In order to gain better insight of the personal and work habits of its customers, Company Corp. has asked the data scientists from Cool DS Inc to perform an analysis of the subject within its own companies customer population. Since the customer count of Company Corp. is over 1 million, a random sample from the customer population of each country where Company Corp. retains a physical office, was taken. Each randomly assigned customer was given a survey that included questions regarding personal qualities such as age, income, marital status, etc., as well as a set of questions to be answered from four different procrastination scales (_see MSDS_CaseStudy2_Master_Codebook.MD for procrastination scale details_). In addition, Cool DS Inc. aligned these results with the estimated Human Development Index factor for each country represented in the survey, to get a better idea of the correlation between a countries HDI and an individuals tendency to procrastinate. The following analysis details the findings from Cool DS Inc's study of procrastination within Company Corp.'s population.
+In order to gain better insight of the personal and work habits of its customers, Company Corp. has asked the data scientists from Cool DS Inc to perform an analysis of the subject within its own company's customer population. Since the customer count of Company Corp. is over 1 million, a random sample from the customer population of each country where Company Corp. retains a physical office, was taken. Each randomly assigned customer was given a survey that included questions regarding personal qualities such as age, income, marital status, etc., as well as a set of questions to be answered from four different procrastination scales (_see MSDS_CaseStudy2_Master_Codebook.MD for procrastination scale details_). In addition, Cool DS Inc. aligned these results with the estimated Human Development Index factor for each country represented in the survey, to get a better idea of the correlation between a countries HDI and an individual's tendency to procrastinate. The following analysis details the findings from Cool DS Inc's study of procrastination within Company Corp.'s population.
   
 
 <br>
@@ -66,7 +66,7 @@ source('MSDS6306_Final_Case_Study_Functions.R')
 
 #### Gather Data for Analysis
 
-The first task performed by Cool DS Inc. was to survey 4,264 customers within Company Corp's universal customer population. The customers surveyed were taken by random sample and each customer was asked to fill out a questionaire consisting of 61 questions related to personal and procrastiation scale questions.  Some of the questions were limited in answer by drop-down, and some allowed the customer to 'write-in' their own response. Results of each individuals survey were tallied and consolidated into one master spreadsheet. Because write-in was allowed on some questions, data clean-up on the final consolidated survey was required.  The average procrastination score across the four procrastination scales was calculated as well. The information below details how the data transformation and cleanup was performed.
+The first task performed by Cool DS Inc. was to survey 4,264 customers within Company Corp's universal customer population. The customers surveyed were taken by random sample and each customer was asked to fill out a questionnaire consisting of 61 questions related to personal and procrastination scale questions.  Some of the questions were limited in answer by drop-down, and some allowed the customer to 'write-in' their own response. Results of each individual's survey were tallied and consolidated into one master spreadsheet. Because write-in was allowed on some questions, data clean-up on the final consolidated survey was required.  The average procrastination score across the four procrastination scales was calculated as well. The information below details how the data transformation and cleanup was performed.
 
 <br>
 
@@ -100,7 +100,8 @@ resp_attr_names = c('ID','Age','Gender','Kids','Edu','Work_Status',
 										'Num_daught')
 
 resp_answer_names = c('ID',paste('DP_',1:5,sep=''),paste('AIP_',1:15,sep=''),
-											paste('GP_',1:20,sep=''),paste('SWLS_',1:5,sep=''),'Self_Score','Others_Score')
+											paste('GP_',1:20,sep=''),paste('SWLS_',1:5,sep=''),'
+_Score','Others_Score')
 
 colnames(resp_attr) = resp_attr_names
 colnames(resp_answers) = resp_answer_names
@@ -157,7 +158,7 @@ resp_answers$SWLS_Avg = round(apply(X=resp_answers[,42:46],MARGIN=1,FUN=mean),5)
 "The Human Development Index (HDI) is a summary measure of average achievement in key dimensions of human development: a long and healthy life, being knowledgeable and have a decent standard of living. The HDI is the geometric mean of normalized indices for each of the three dimensions". _(ref: United Nation's Development Program)_
 http://hdr.undp.org/en/content/human-development-index-hdi
 
-In addition to the survey, data was scraped from the UN's HDI Wikipedia site noted in the code snippit below, which assigns the 2016 estimated HDI for 2015, by country. This data was then merged with they survey data, by country, in order to test for correlation between procrastination and the estimated HDI factor.  
+In addition to the survey, data was scraped from the UN's HDI Wikipedia site noted in the code snippet below, which assigns the 2016 estimated HDI for 2015, by country. This data was then merged with the survey data, by country, to test for correlation between procrastination and the estimated HDI factor.  
 
 <br>
 
@@ -209,7 +210,7 @@ resp_full = merge(x=resp_answers,y=resp_attrwHDI,by.x='ID',by.y='ID',all.y=TRUE)
 
 <br>
 
-One of the first things found from a statistical analysis across the data population, are the descriptive statistics on Age, Income, HDI and the average response for the four procrastionation scales.  Something to note is the N, or number of individuals measured in the descriptive statistic.  For annual income this number is 3,621.  This number is less than the 4,036 total population because some customers left the annual income survey field empty.  Also to note, the N for HDI is 3,844.  This is due to some respondents not populating their county of residence within the survey. So when the HDI statistics were calculated, those with a country of residence of NA were not included.
+One of the first things found from a statistical analysis across the data population, are the descriptive statistics on Age, Income, HDI and the average response for the four procrastination scales.  Something to note is the N, or number of individuals measured in the descriptive statistic.  For annual income this number is 3,621.  This number is less than the 4,036 total population because some customers left the annual income survey field empty.  Also to note, the N for HDI is 3,844.  This is due to some respondents not populating their county of residence within the survey. So when the HDI statistics were calculated, those with a country of residence of NA were not included.
 
 <br>
 
@@ -238,11 +239,11 @@ stargazer(resp_full[,c('Age','Annual_Inc','HDI','DP_Avg','AIP_Avg','GP_Avg','SWL
 
 <br>
 
-The graphs below show a histogram of Age, HDI and Annual Income across respondents.  The boxplot chart gives a measure of the average of each of our procrastination scales.  The histogram of Age shows for the most part as normally distributed.  However, the HDI histogram shows as very left skewed and the histogram of Annual Income as fairly right skewed with a bit of bimodality.
+The graphs below show a histogram of Age, HDI and Annual Income across respondents.  The boxplot chart gives a measure of the average of each of our procrastination scales.  The histogram of Age shows for the most part as normally distributed.  However, the HDI histogram shows as very left skewed and the histogram of Annual Income as fairly right-skewed with a bit of bimodality.
 
 Also included are frequency tables that provide Company Corp. with a better idea of the population distribution of its customer base. What's interesting is the high number of individuals who self-describe as procrastinators and those who are also viewed as procrastinators by others.
 
-_Please note that the frequency tables for Occupation Category and Participants Per Country are rather large, so the top 10 and 20 of each table, are displayed.  For details on how the Occupation Category keywords were matched, and for a list of the Remaining Counties in the Particpants per Country list, please see the 'Job_Keyword_Mapping.csv' and 'Remaing_Countries.csv' files for details._
+_Please note that the frequency tables for Occupation Category and Participants Per Country are rather large, so the top 10 and 20 of each table, are displayed.  For details on how the Occupation Category keywords were matched, and for a list of the Remaining Counties in the Participants per Country list, please see the 'Job_Keyword_Mapping.csv' and 'Remaing_Countries.csv' files for details._
 
 <br>
 
@@ -692,9 +693,9 @@ kable(match_either,row.names=FALSE,format='html')%>%
 
 #### Deeper Analysis and Visualization
 
-A deeper analysis of the data are also shown below. For several analyses, a mean value was taken in order to provide a cleaner perspective of the population as whole, instead of displaying unique values. This aides in the visualization of the variables. A few interesting things to note:
+A deeper analysis of the data are also shown below. For several analyses, a mean value was taken in order to provide a cleaner perspective of the population as whole, instead of displaying unique values. This aids in the visualization of the variables. A few interesting things to note:
 
-* There are 6 countries that exist in both the DP and AIP top 15 Means. They are:Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka   and Uraguay.
+* There are 6 countries that exist in both the DP and AIP top 15 Means. They are: Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka   and Uraguay.
 
 * As noted by the 'Average Annual Income vs Average Age' graph, there does seem to be a linear relationship between age and mean annual 	income until about age 40.  However, starting at around age 40, an income disparity between men and women can be seen that continues   with age progression.
   
@@ -839,11 +840,11 @@ ggplot(mDFHDIAvg, aes(fill=HDI_Cat_Relevel, y=SWLS_Avg, x=HDI_Cat_Relevel)) +
 
 ### Conclusion
 
-In conclusion, we are able to note several findings regarding Company Corp's customer population in terms of invidual qualities and procrastination tendencies in relation to the Human Development Index of that individuals country of residence.
+In conclusion, we are able to note several findings regarding Company Corp's customer population in terms of individual qualities and procrastination tendencies in relation to the Human Development Index of that individual's country of residence.
 
 1. When assessing income, age and gender seem to matter.  As displayed in the 'Average Annual Income vs Average Age' graph, the relationship between age and income grows in a linear fashion regardless of gender, but beginning around age 40, the great income divide begins.  We cannot infer that gender alone is the cause of this income disparity, factors such as taking time off of work to raise children, etc. could play a role.  However, the findings are interesting.
 
-2. There does seem to be a pattern among countries that procrastinate the most.  This can be found in the 'Countries with the top 15 AIP Average' historam and the 'Countries with the top 15 DP Average' histogram, both which contain the countries of Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka and Uraguay. Also, there does seem to be some correlation between the level of Procrastination with the HDI Category.  So do Company Corp. customers living in countries with higher Human Develoment Indices tend to procrastinate more?  It seems this may be the case, but further analysis may need to be performed.
+2. There does seem to be a pattern among countries that procrastinate the most.  This can be found in the 'Countries with the top 15 AIP Average' histogram and the 'Countries with the top 15 DP Average' histogram, both which contain the countries of Dominican Republic, Ecuador, Panama, Qatar, Sri Lanka and Uruguay. Also, there does seem to be some correlation between the level of Procrastination with the HDI Category.  So do Company Corp. customers living in countries with higher Human Development Indices tend to procrastinate more?  It seems this may be the case, but further analysis may need to be performed.
 
 Since a random sample of Company Corp's customer population was taken, we can make an inference of these findings across all of Company Corp's customer population. An output of the details of this study can also be found in the 'Procrastination Details.pdf' file.
 
